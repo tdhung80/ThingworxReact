@@ -1,2 +1,0 @@
-# ThingworxReact
-Created with CodeSandbox
