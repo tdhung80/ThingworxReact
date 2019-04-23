@@ -3,7 +3,9 @@ import { Route, Link, Redirect, withRouter, Switch } from "react-router-dom";
 import { userService } from "../services";
 import LoginPage from "./home/login";
 import { PrivateRoute } from "../.ui";
-const DashboardPage = lazy(() => import("./home/dashboard"));
+// const DashboardPage = lazy(() => import("./home/dashboard"));
+const DemoForm = lazy(() => import("./home/demo.form"));
+const DemoGrid = lazy(() => import("./home/demo.grid"));
 
 // TODO: build Context to keep Model
 
@@ -30,7 +32,9 @@ export default withRouter(({ history }) => {
 
   return (
     <Switch>
-      <PrivateRoute exact path="/" component={DashboardPage} />
+      {/* <PrivateRoute exact path="/" component={DashboardPage} /> */}
+      {/* <Route exact path="/" component={DemoForm} /> */}
+      <Route exact path="/" component={DemoGrid} />
       <Route component={NoMatch} />
     </Switch>
   );

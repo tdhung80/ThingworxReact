@@ -1,16 +1,8 @@
 // import axios from 'axios';
-import { lazy } from "react";
+// import { lazy } from "react";
+import NProgress from "nprogress";
 import { serviceUrls } from "./index";
 import { i18n } from "../.ui/index";
-
-// const callFakeAPI = delay =>
-//   new Promise(resolve => {
-//     setTimeout(resolve, delay);
-//   });
-// async function fetchMyAPI() {
-//     await callFakeAPI(3000);
-//     ...
-// }
 
 export function configureFakeBackend() {
   let users = [
@@ -26,7 +18,13 @@ export function configureFakeBackend() {
   let requests = 0;
   let realFetch = window.fetch;
   window.fetch = function(url, opts) {
-    if (requests++ == 0) NProgress.start(); // count request
+    // pass through any unmanaged requests
+    if (Object.keys(serviceUrls).indexOf(url) === -1) {
+      console.log("fetch: " + url);
+      return realFetch(url, opts);
+    }
+
+    if (requests++ === 0) NProgress.start(); // count request
     return new Promise((resolve, reject) => {
       // TODO Nprogress
       console.log("AJAX started");
@@ -92,7 +90,7 @@ export function configureFakeBackend() {
     }).finally(() => {
       // stop animation
       console.log("AJAX done");
-      if (--requests == 0) NProgress.done();
+      if (--requests === 0) NProgress.done();
     });
   };
 }

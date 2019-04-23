@@ -1,17 +1,19 @@
 import React from "react";
-import { Button as BSButton } from "reactstrap";
+//import { Button } from "react-bootstrap";
+//import { Button } from "mdbreact"
+import Button from "muicss/lib/react/button";
 
-export function Button(props) {
+export function ActionButton(props) {
   var { inProgress, ...other } = props;
 
   if (inProgress) {
     other = { ...other, disabled: true };
     return (
-      <BSButton {...other}>
+      <Button {...other}>
         <i className="fa fa-spinner fa-spin" />
         {props.children}
-      </BSButton>
+      </Button>
     );
   }
-  return <BSButton {...other} />;
+  return <Button {...other} />;
 }
