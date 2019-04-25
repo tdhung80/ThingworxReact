@@ -1,34 +1,34 @@
-import React, { Suspense, lazy, useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  withRouter,
-  Switch
-} from "react-router-dom";
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import "./app.scss";
-import "./scripts.js";
+import "./app.react.scss";
+import "./app.mdb.scss";
+// import "./scripts.js";
 
 import { ViewContext } from "./app.context";
-
-import UserController from "./.core/user.controller";
+import { configureFakeBackend } from "./services";
 import HomeController from "./.core/home.controller";
+const AppLoader = lazy(() => import("./app.loader"));
+const DemoForm = lazy(() => import("./.core/demo/form"));
+const DemoGrid = lazy(() => import("./.core/demo/grid"));
+
+configureFakeBackend();
 
 export default () => {
+  console.log("App Loaded");
+
   return (
     <ViewContext>
-      <div>
-        <Router>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Switch>
-              <Route path="/users/" component={UserController} />
-              <Route component={HomeController} />
-            </Switch>
-          </Suspense>
-        </Router>
-      </div>
+      <Router>
+        <Suspense fallback={<AppLoader />}>
+          <Switch>
+            <Route path="/demo/form" component={DemoForm} />
+            <Route exact path="/" component={DemoGrid} />
+            <Route component={HomeController} />
+          </Switch>
+        </Suspense>
+      </Router>
     </ViewContext>
   );
 };

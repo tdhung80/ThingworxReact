@@ -1,5 +1,6 @@
 export * from "./fake-backend";
 export * from "./user.service";
+export * from "./texts";
 export * from "./thingworx";
 
 const serverURI = `https://dev-etools.ptc.com/Thingworx/`;

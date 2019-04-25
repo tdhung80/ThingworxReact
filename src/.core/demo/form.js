@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Alert, ActionButton as Button, Modal, Form, i18n } from "../../.ui";
+import { Alert, ActionButton as Button, Modal, Form } from "../../.ui";
 import { FieldInput, FieldSelect, useFormState } from "../../.ui/FormView";
-import Page from "../layout/page";
+import translator from "../../.ui/Translator";
+import Page from "../layout/home";
 import { fakeAPI } from "../../services";
+
+const i18n = translator("FORM_FORM_DEMO");
 
 // TODO: use validator for advange validation rules
 // TODO: react-toastify
@@ -213,43 +216,21 @@ export default props => {
 
             <div className="row">
               <div className="col">
-                <FieldInput
-                  label="Month"
-                  required
-                  {...input.month("month")}
-                  errorMessage={fieldErrors.month}
-                />
+                <FieldInput label="Month" required {...input.month("month")} errorMessage={fieldErrors.month} />
               </div>
               <div className="col">
-                <FieldInput
-                  label="Week"
-                  required
-                  {...input.week("week")}
-                  errorMessage={fieldErrors.week}
-                />
+                <FieldInput label="Week" required {...input.week("week")} errorMessage={fieldErrors.week} />
               </div>
             </div>
 
             <div className="row mt-3">
               <div className="col">
-                <FieldInput
-                  label="Include Hotel"
-                  {...input.checkbox("extra", "hotel")}
-                />
-                <FieldInput
-                  label="Include Car"
-                  {...input.checkbox("extra", "car")}
-                />
+                <FieldInput label="Include Hotel" {...input.checkbox("extra", "hotel")} />
+                <FieldInput label="Include Car" {...input.checkbox("extra", "car")} />
               </div>
               <div className="col">
-                <FieldInput
-                  label="One-way"
-                  {...input.radio("trip", "one-way")}
-                />
-                <FieldInput
-                  label="Round Trip"
-                  {...input.radio("trip", "round-trip")}
-                />
+                <FieldInput label="One-way" {...input.radio("trip", "one-way")} />
+                <FieldInput label="Round Trip" {...input.radio("trip", "round-trip")} />
               </div>
             </div>
 
@@ -282,41 +263,17 @@ export default props => {
                 </FieldSelect>
               </div>
             </div>
-            <FieldSelect
-              label="Cabin"
-              required
-              {...input.select("cabin")}
-              errorMessage={fieldErrors.cabin}
-            >
+            <FieldSelect label="Cabin" required {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
               <option value="">---</option>
               <option value="economy">Economy</option>
               <option value="business">Business</option>
               <option value="first">First</option>
             </FieldSelect>
 
-            <FieldInput
-              label="Favorite Color"
-              {...input.color("color")}
-              errorMessage={fieldErrors.color}
-            />
-            <FieldInput
-              label="Phone"
-              required
-              {...input.tel("tel")}
-              errorMessage={fieldErrors.tel}
-            />
-            <FieldInput
-              label="Website"
-              required
-              {...input.url("url")}
-              errorMessage={fieldErrors.url}
-            />
-            <FieldInput
-              label="Search"
-              required
-              {...input.search("search")}
-              errorMessage={fieldErrors.search}
-            />
+            <FieldInput label="Favorite Color" {...input.color("color")} errorMessage={fieldErrors.color} />
+            <FieldInput label="Phone" required {...input.tel("tel")} errorMessage={fieldErrors.tel} />
+            <FieldInput label="Website" required {...input.url("url")} errorMessage={fieldErrors.url} />
+            <FieldInput label="Search" required {...input.search("search")} errorMessage={fieldErrors.search} />
             <FieldInput
               label="Suggestions"
               required
@@ -330,12 +287,7 @@ export default props => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={handleAction}
-            inProgress={inProgress}
-          >
+          <Button variant="primary" size="lg" onClick={handleAction} inProgress={inProgress}>
             {i18n.action("Process")}
           </Button>
         </Modal.Footer>

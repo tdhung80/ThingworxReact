@@ -1,225 +1,129 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-use-form-state";
-import {
-  Alert,
-  ActionButton as Button,
-  Modal,
-  FieldInput,
-  FieldSelect,
-  i18n,
-  useFormInput
-} from "../../.ui";
-import Page from "../layout/page";
+import { Alert, ActionButton as Button, Modal, Form } from "../../.ui";
+import translator from "../../.ui/Translator";
+import { FieldInput, useFormState } from "../../.ui/FormView";
+import Page from "../layout/blank";
 
 // TODO: apply Captcha
 
+const i18n = translator("FORM_LOGIN");
+
 export default props => {
   const [formState, input] = useFormState({
-    extra: ["hotel"],
-    trip: "one-way",
-    cabin: "first"
+    remember: true
   });
-  const [error, setError] = useState();
-  //const [password, setPassword] = useFormInput();
-  const [remember] = useFormInput(true);
+  const [formError, setFormError] = useState();
+  const [fieldErrors, setFieldErrors] = useState({});
   const [inProgress, setInProgress] = useState(false);
   const scopeEl = useRef();
-  const loginEl = useRef();
+  const focusEl = useRef();
 
   useEffect(() => {
     console.log("Login.focus()");
-    //loginEl.current.inputRef.current.focus();
+    // focusEl.current.focus();
   }, []);
 
-  const handleAction = () => {
-    var submitEvent = new Event("submit", { bubbles: false });
-    scopeEl.current.handleSubmit(submitEvent);
-  };
-
-  const handleSubmit = (e, formData, inputs) => {
-    e.preventDefault();
-    if (inProgress) return;
-    setError("");
-    setInProgress(true);
-    debugger;
-    props
-      .onLogin({ ...formData, from: props.from, remember: remember.value })
-      .catch(error => {
-        console.error("Login failed! " + error);
-        setError(error);
-        //setPassword("");
-        setInProgress(false);
-      });
-  };
-
-  const handleErrorSubmit = (e, formData, errorInputs) => {
-    //console.error(errorInputs);
-    formData.remember = remember.value;
-    console.log(formData);
-    setError(i18n.Login_Failed);
-  };
+  const handleAction = () => scopeEl.current.dispatchEvent(new Event("submit", { bubbles: false }));
 
   const handleFormSubmit = e => {
     e.stopPropagation();
     e.preventDefault();
-    const form = e.currentTarget;
+    //console.clear();
     console.log(formState.values);
-    console.log(form.checkValidity());
-  };
+    let errors = formState.errors;
+    console.log(errors);
 
-  // was-validated
+    // react-use-form-state does not report error if a field is not visited
+    // use HTML5 JS validation
+    // TODO: process custom validation
+    const form = e.currentTarget;
+    let errorEl;
+    if (!form.checkValidity() || Object.keys(errors).length > 0) {
+      // form.reportValidity()
+      ["input", "select", "textarea"].forEach(tagName => {
+        let elements = form.getElementsByTagName(tagName);
+        for (let i = 0, n = elements.length; i < n; i++) {
+          let el = elements[i],
+            name = el.name;
+          // don't override custom validation error
+          if (!errors[name] && !el.validity.valid) {
+            errors[name] = el.validationMessage;
+          }
+          if (errors[name] && (!errorEl || errorEl.tabIndex > el.tabIndex)) {
+            errorEl = el;
+            // TODO: focus on the most top/left element, use el.getBoundingClientRect()
+          }
+        }
+      });
+    }
+
+    let keys = Object.keys(errors);
+    if (keys.length > 0) {
+      // TODO: translate error
+      // keys.forEach(field => (errors[field] = i18n.text(errors[field], field)));
+      setFieldErrors(errors);
+      errorEl && errorEl.focus();
+      return;
+    }
+
+    //
+    // no error
+    //
+    console.log("Form.doSubmit()");
+    setInProgress(true);
+    props.onLogin({ ...formState.values, from: props.from }).catch(error => {
+      console.error("Login failed! " + error);
+      focusEl.current.focus();
+      setFormError(error);
+      //setPassword("");
+      setInProgress(false);
+    });
+  };
 
   return (
     <Page>
-      <Modal.Dialog>
+      <Modal aria-labelledby="contained-modal-title-vcenter" centered show={true}>
         <Modal.Header>
-          <h1>{i18n.Login}</h1>
+          <h1>{i18n.title("Login")}</h1>
         </Modal.Header>
 
         <Modal.Body>
-          {error && <Alert color="danger">{error}</Alert>}
-          <form
-            className="needs-validation"
+          {formError && <Alert variant="danger">{formError}</Alert>}
+          <Form
             noValidate
+            validated={Object.keys(fieldErrors).length > 0}
             onSubmit={handleFormSubmit}
+            className="needs-validation"
             ref={scopeEl}
           >
             <FieldInput
-              label="Your name"
-              placeholder="Hello world"
+              label={i18n.label("User name")}
               floating={true}
               required
-              {...input.text("yourname")}
+              {...input.text("user")}
+              errorMessage={fieldErrors.user}
+              ref={focusEl}
             />
-
-            <div className="row">
-              <div className="col">
-                <FieldInput
-                  label="Email"
-                  floating={true}
-                  {...input.email("email")}
-                />
-              </div>
-              <div className="col">
-                <FieldInput
-                  label="Password"
-                  floating={true}
-                  {...input.password("password")}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col">
-                <FieldInput
-                  label="Departure"
-                  {...input.date("departure-date")}
-                />
-              </div>
-              <div className="col">
-                <FieldInput
-                  label="Flight Time"
-                  {...input.time("flight-time")}
-                />
-              </div>
-            </div>
-
-            <div className="row mt-4">
-              <div className="col">
-                <FieldInput
-                  label="Include Hotel"
-                  {...input.checkbox("extra", "hotel")}
-                />
-              </div>
-            </div>
             <FieldInput
-              label="Include Car"
-              {...input.checkbox("extra", "car")}
+              label={i18n.label("Password")}
+              floating={true}
+              required
+              {...input.password("pass")}
+              errorMessage={fieldErrors.pass}
             />
             <div className="mt-4">
-              <FieldInput label="One-way" {...input.radio("trip", "one-way")} />
+              <FieldInput label={i18n.label("Remember Me")} {...input.checkbox("remember")} />
             </div>
-            <FieldInput
-              label="Round Trip"
-              {...input.radio("trip", "round-trip")}
-            />
-            <FieldInput label="Travelers" {...input.number("travelers")} />
-            <FieldInput label="Price Range" {...input.range("price-range")} />
-            <FieldSelect label="Cabin" {...input.select("cabin")}>
-              <option value="economy">Economy</option>
-              <option value="business">Business</option>
-              <option value="first">First</option>
-            </FieldSelect>
-            <FieldInput label="Favorite Cplor" {...input.color("color")} />
-            <FieldInput label="Phone" {...input.tel("tel")} />
-            <FieldInput label="Website" {...input.url("url")} />
-            <FieldInput label="Search" {...input.search("search")} />
-            <FieldText label="Note" {...input.textarea("note")} />
             <Button className="d-none" inProgress={inProgress} />
-          </form>
+          </Form>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={handleAction}
-            inProgress={inProgress}
-          >
-            {i18n.Login}
+          <Button variant="primary" size="lg" onClick={handleAction} inProgress={inProgress}>
+            {i18n.action("Login")}
           </Button>
         </Modal.Footer>
-      </Modal.Dialog>
-
-      {/* <Modal isOpen={true} autoFocus={true} centered={true}>
-        <ModalHeader>Login</ModalHeader>
-        <ModalBody>
-          {error && <Alert color="danger">{error}</Alert>}
-          <ValidationForm
-            onSubmit={handleSubmit}
-            onErrorSubmit={handleErrorSubmit}
-            ref={scopeEl}
-          >
-            <FormGroup>
-              <StringField
-                name="user"
-                label="Username"
-                required={true}
-                ref={loginEl}
-              />
-            </FormGroup>
-            <FormGroup>
-              <StringField
-                name="pass"
-                label="Password"
-                type="password"
-                required={true}
-                {...password}
-              />
-            </FormGroup>
-            <FormGroup>
-              <BooleanField
-                name="remember"
-                label="Remember me"
-                type="checkbox"
-                checked={remember.value}
-                {...remember}
-              />
-            </FormGroup>
-            <Button className="d-none" inProgress={inProgress} />
-          </ValidationForm>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color="primary"
-            size="lg"
-            onClick={handleAction}
-            inProgress={inProgress}
-          >
-            {i18n.Login}
-          </Button>
-        </ModalFooter>
-      </Modal> */}
+      </Modal>
     </Page>
   );
 };

@@ -1,8 +1,7 @@
 // import axios from 'axios';
 // import { lazy } from "react";
 import NProgress from "nprogress";
-import { serviceUrls } from "./index";
-import { i18n } from "../.ui/index";
+import { serviceUrls, texts } from "./index";
 
 export function configureFakeBackend() {
   let users = [
@@ -19,8 +18,12 @@ export function configureFakeBackend() {
   let realFetch = window.fetch;
   window.fetch = function(url, opts) {
     // pass through any unmanaged requests
-    if (Object.keys(serviceUrls).indexOf(url) === -1) {
-      console.log("fetch: " + url);
+    if (
+      Object.keys(serviceUrls)
+        .map(key => serviceUrls[key])
+        .indexOf(url) === -1
+    ) {
+      console.log("fetch/1: " + url);
       return realFetch(url, opts);
     }
 
@@ -33,6 +36,8 @@ export function configureFakeBackend() {
       // wrap in timeout to simulate server api call
       setTimeout(() => {
         // authenticate
+        debugger;
+
         if (url === serviceUrls.login && opts.method === "POST") {
           // Basic Authentication
           const authToken = opts.headers.Authorization;
@@ -50,12 +55,7 @@ export function configureFakeBackend() {
           // Authorization: "Basic dGVzdDp0ZXN0"
 
           // find if any user matches login credentials
-          let filteredUsers = users.filter(user => {
-            return (
-              user.username === params.username &&
-              user.password === params.password
-            );
-          });
+          let filteredUsers = users.filter(user => user.username === params.username && user.password === params.password);
 
           if (filteredUsers.length) {
             // if login details are valid return user details
@@ -72,7 +72,7 @@ export function configureFakeBackend() {
             });
           } else {
             // else return error
-            reject(i18n.Login_Failed);
+            reject(texts.LOGIN_FAILED);
           }
 
           return;
@@ -84,7 +84,7 @@ export function configureFakeBackend() {
         }
 
         // pass through any requests not handled above
-        console.log("fetch: " + url);
+        console.log("fetch/2: " + url);
         realFetch(url, opts).then(response => resolve(response));
       }, 500);
     }).finally(() => {

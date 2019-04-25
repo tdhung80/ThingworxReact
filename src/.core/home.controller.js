@@ -1,45 +1,52 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Route, Link, Redirect, withRouter, Switch } from "react-router-dom";
-import { userService } from "../services";
-import LoginPage from "./home/login";
 import { PrivateRoute } from "../.ui";
-// const DashboardPage = lazy(() => import("./home/dashboard"));
-const DemoForm = lazy(() => import("./home/demo.form"));
-const DemoGrid = lazy(() => import("./home/demo.grid"));
+import { userService } from "../services";
+
+const UserController = lazy(() => import("./.core/user.controller"));
+
+const Page = lazy(() => import("./layout/home"));
+const LoginPage = lazy(() => import("./home/login"));
+const DashboardPage = lazy(() => import("./home/dashboard"));
 
 // TODO: build Context to keep Model
 
 export default withRouter(({ history }) => {
-  const path = history.location.pathname;
-  const state = history.location.state;
-  console.log("HomeController: " + path);
+  const { pathname, state } = history.location;
+  console.log("HomeController: " + pathname);
 
-  const doLogin = loginView => {
-    return userService.login(loginView.user, loginView.pass).then(() => {
+  //
+  // Actions
+  //
+
+  const doLogin = loginView =>
+    userService.login(loginView.user, loginView.pass).then(() => {
       console.log("Login success");
       history.push(loginView.from || "/");
     });
-  };
 
-  if ("/login" === path) {
+  //
+  // ActionResult
+  //
+
+  if ("/login" === pathname) {
     return <LoginPage onLogin={doLogin} from={state && state.from.pathname} />;
   }
 
-  if ("/logout" === path) {
+  if ("/logout" === pathname) {
     userService.logout();
     history.push("/");
   }
 
   return (
-    <Switch>
-      {/* <PrivateRoute exact path="/" component={DashboardPage} /> */}
-      {/* <Route exact path="/" component={DemoForm} /> */}
-      <Route exact path="/" component={DemoGrid} />
-      <Route component={NoMatch} />
-    </Switch>
+    <Page>
+      <Switch>
+        <PrivateRoute exact path="/" component={DashboardPage} />
+        <Route path="/users/" component={UserController} />
+        <Route component={NoMatch} />
+      </Switch>
+    </Page>
   );
 });
 
-const NoMatch = withRouter(({ history }) => (
-  <h3>No Match: {history.location.pathname}</h3>
-));
+const NoMatch = withRouter(({ history }) => <h1>No Match: {history.location.pathname}</h1>);
