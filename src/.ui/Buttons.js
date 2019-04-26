@@ -3,7 +3,7 @@ import React from "react";
 //import { Button } from "mdbreact"
 import Button from "muicss/lib/react/button";
 
-export function ActionButton(props) {
+function ActionButton(props) {
   var { inProgress, ...other } = props;
 
   if (inProgress) {
@@ -17,3 +17,5 @@ export function ActionButton(props) {
   }
   return <Button {...other} />;
 }
+
+export default React.memo(ActionButton);

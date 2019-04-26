@@ -114,7 +114,12 @@ export default props => {
             <div className="mt-4">
               <FieldInput label={i18n.label("Remember Me")} {...input.checkbox("remember")} />
             </div>
-            <Button className="d-none" inProgress={inProgress} />
+            <Button className="d-none" inProgress={inProgress}>
+              {buttons => {
+                console.log(typeof buttons);
+                return <span>Hello</span>;
+              }}
+            </Button>
           </Form>
         </Modal.Body>
 

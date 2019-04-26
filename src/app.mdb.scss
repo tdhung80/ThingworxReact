@@ -1,6 +1,38 @@
+ // @import url(//www.minvps.net/mdb.min.css);
+
+ .App {
+
+  .form-control, .form-check-label { font-size: 1.4rem; }
+  .form-check-label { padding-top: 0.5rem; margin-bottom: 1.3rem; }
+  .form-check .form-check-input[type="checkbox"] {
+    & + label::before { 
+      top: -0.4rem;
+      left: -0.5rem;
+      width: 1.4rem;
+      height: 2.2rem;
+    }
+    &:not(:checked) + label::before {
+      top: -0.2rem;
+      left: 0.1rem;
+      width: 2.2rem;
+    }
+  } 
+
+  .bmd-form-group {
+    //.checkbox, .radio label, label { font-size: 1.4rem } 
+    .bmd-label-static, .bmd-label-floating { font-size: 1.1rem; top: 0.5rem; }
+    &:not(.is-focused):not(.is-filled) {
+      .bmd-label-floating { font-size: 1.4rem; top: 2.1875rem; }
+    }
+
+  }  
+
+ }
+
 /* 
 * Material Design for Bootstrap
 */	 
+
 .form-check-input[type="radio"] {
   + {
       label {

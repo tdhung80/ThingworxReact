@@ -28,6 +28,8 @@ export function configureFakeBackend() {
     }
 
     if (requests++ === 0) NProgress.start(); // count request
+    debugger;
+
     return new Promise((resolve, reject) => {
       // TODO Nprogress
       console.log("AJAX started");
@@ -36,7 +38,6 @@ export function configureFakeBackend() {
       // wrap in timeout to simulate server api call
       setTimeout(() => {
         // authenticate
-        debugger;
 
         if (url === serviceUrls.login && opts.method === "POST") {
           // Basic Authentication
@@ -55,7 +56,9 @@ export function configureFakeBackend() {
           // Authorization: "Basic dGVzdDp0ZXN0"
 
           // find if any user matches login credentials
-          let filteredUsers = users.filter(user => user.username === params.username && user.password === params.password);
+          let filteredUsers = users.filter(
+            user => user.username === params.username && user.password === params.password
+          );
 
           if (filteredUsers.length) {
             // if login details are valid return user details

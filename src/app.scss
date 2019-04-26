@@ -1,9 +1,51 @@
+@import url(//unpkg.com/accessible-nprogress/dist/accessible-nprogress.min.css);
+
 $text-color: #000;
-$bg-color: #efefef;
+$bg-color: #efefef; 
+
+// TODO
+// add autorefixer
+// what eat 18rem on the top !?
+
+html.App {
+	height: 100%;
+	font-family: Roboto, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-weight: 300;  
+	font-size: 10px; // 1rem = 10px, ems and rems will solve problems using pixels. we use rem in spacing (margin, padding, etc.) and font sizing. And we use em for layouts like menu
+	
+	background: #004a86;
+	background: -webkit-radial-gradient(center center, circle cover, #0091d5 0%, #0091d5 15%, #004a86 100%); // TODO: use autorefixer => remove -webkit-
+
+	body { 
+		height: 100%;
+    min-height: 100%;
+		font-size: 1.4rem; 	
+		color: #ffe;			
+    margin: 0;
+    padding: 0;
+		// background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaAgMAAADH8+SpAAAACVBMVEXo6Oj7+/va2tru7qMeAAAAbklEQVQI11XMoQ3DQBAF0dnTfeCgA+sSAtLFlrDgYllBLsVNhJtESpk+YmDypCHDHLzBQZCPvwXxW/akdG2NKW0FpXV4pi3gtQqaNbvr1gTWlYwQcMjLwcfylcx7fEFb6ddN6zRsLoOolbg7DnECZjIQ3Fk4Jc4AAAAASUVORK5CYII=');
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAADFBMVEX///////////8AAAD1GyhhAAAABHRSTlMoNhsAX8Wz8wAAAC5JREFUOMtjCMUCGOr///7/fz8qMWQEs1YtWrVKC5UY9dGoj0Z9NOqjUR8NckEAV3eSqNB2GKwAAAAASUVORK5CYII=');		
+	}
+
+	#progress {
+		.bar {
+			background: #ff3d00;
+			height: 4px;
+		}
+		.spinner-icon {
+			border-top-color: #29d;
+			border-left-color: #29d;
+		}
+	}
+}
 
 .App {
-	background-color: $bg-color;
-	
+	background-color: $bg-color;	
+
+	label.required::after {
+		content: ' *';
+		color: Red;
+	}
 
   /* 
    * Bootstrap 

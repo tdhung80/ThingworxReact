@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Alert, ActionButton as Button, Modal, Form } from "../../.ui";
-import { FieldInput, FieldSelect, useFormState } from "../../.ui/FormView";
+import { FieldInput, FieldSelect, useFormState, validateForm } from "../../.ui/FormView";
 import translator from "../../.ui/Translator";
 import Page from "../layout/home";
 import { fakeAPI } from "../../services";
@@ -93,35 +93,13 @@ export default props => {
     e.preventDefault();
     console.clear();
     console.log(formState.values);
-    let errors = formState.errors;
-    console.log(errors);
 
     // react-use-form-state does not report error if a field is not visited
-    // use HTML5 JS validation
     // TODO: process custom validation
-    const form = e.currentTarget;
-    let errorEl;
-    if (!form.checkValidity() || Object.keys(errors).length > 0) {
-      // form.reportValidity()
-      ["input", "select", "textarea"].forEach(tagName => {
-        let elements = form.getElementsByTagName(tagName);
-        for (let i = 0, n = elements.length; i < n; i++) {
-          let el = elements[i],
-            name = el.name;
-          // don't override custom validation error
-          if (!errors[name] && !el.validity.valid) {
-            errors[name] = el.validationMessage;
-          }
-          if (errors[name] && (!errorEl || errorEl.tabIndex > el.tabIndex)) {
-            errorEl = el;
-            // TODO: focus on the most top/left element, use el.getBoundingClientRect()
-          }
-        }
-      });
-    }
-
-    let keys = Object.keys(errors);
-    if (keys.length > 0) {
+    let errors = formState.errors;
+    let errorEl = validateForm(e.currentTarget, errors);
+    if (errorEl) {
+      console.log(errors);
       // TODO: translate error
       // keys.forEach(field => (errors[field] = i18n.text(errors[field], field)));
       setFieldErrors(errors);
@@ -145,7 +123,7 @@ export default props => {
 
   return (
     <Page>
-      <Modal.Dialog>
+      <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
         <Modal.Header>
           <h1>{i18n.text("Demo Form")}</h1>
         </Modal.Header>
@@ -167,7 +145,7 @@ export default props => {
               label="Your name"
               placeholder="Hello world"
               floating={true}
-              required
+              required={true}
               {...input.text("yourname")}
               errorMessage={fieldErrors.yourname}
               ref={focusEl}
@@ -178,7 +156,7 @@ export default props => {
                 <FieldInput
                   label="Email"
                   floating={true}
-                  required
+                  required={true}
                   {...input.email("email")}
                   errorMessage={fieldErrors.email}
                 />
@@ -187,7 +165,7 @@ export default props => {
                 <FieldInput
                   label="Password"
                   floating={true}
-                  required
+                  required={true}
                   minLength="8"
                   {...input.password("password")}
                   errorMessage={fieldErrors.password}
@@ -199,7 +177,7 @@ export default props => {
               <div className="col">
                 <FieldInput
                   label="Departure"
-                  required
+                  required={true}
                   {...input.date("departureDate")}
                   errorMessage={fieldErrors.departureDate}
                 />
@@ -207,7 +185,7 @@ export default props => {
               <div className="col">
                 <FieldInput
                   label="Flight Time"
-                  require
+                  require={true}
                   {...input.time("flightTime")}
                   errorMessage={fieldErrors.flightTime}
                 />
@@ -238,13 +216,13 @@ export default props => {
               <div className="col">
                 <FieldInput
                   label="Travelers"
-                  required
+                  required={true}
                   {...input.number("travelers")}
                   errorMessage={fieldErrors.travelers}
                 />
                 <FieldInput
                   label="Price Range"
-                  required
+                  required={true}
                   {...input.range("priceRange")}
                   errorMessage={fieldErrors.priceRange}
                 />
@@ -252,7 +230,7 @@ export default props => {
               <div className="col">
                 <FieldSelect
                   label="Cabins"
-                  required
+                  required={true}
                   {...input.selectMultiple("cabins")}
                   size="4"
                   errorMessage={fieldErrors.cabins}
@@ -263,7 +241,7 @@ export default props => {
                 </FieldSelect>
               </div>
             </div>
-            <FieldSelect label="Cabin" required {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
+            <FieldSelect label="Cabin" required={true} {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
               <option value="">---</option>
               <option value="economy">Economy</option>
               <option value="business">Business</option>
@@ -291,7 +269,7 @@ export default props => {
             {i18n.action("Process")}
           </Button>
         </Modal.Footer>
-      </Modal.Dialog>
+      </Modal>
     </Page>
   );
 };

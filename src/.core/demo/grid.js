@@ -121,12 +121,8 @@ const columns = [
       //console.log(row.id)
       return (
         <>
-          <Button variant="primary" size="sm">
-            Action 1
-          </Button>
-          <Button variant="primary" size="sm">
-            Action 2
-          </Button>
+          <Button variant="primary">Action 1</Button>
+          <Button variant="primary">Action 2</Button>
         </>
       );
     }
@@ -381,7 +377,7 @@ export default props => {
   };
 
   return (
-    <Modal.Dialog size="lg">
+    <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
       <Modal.Header>
         <h1>{i18n.text("Demo Grid")}</h1>
       </Modal.Header>
@@ -442,6 +438,6 @@ export default props => {
           {i18n.action("Process")}
         </ActionButton>
       </Modal.Footer>
-    </Modal.Dialog>
+    </Modal>
   );
 };

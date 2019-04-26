@@ -22,6 +22,7 @@ UI Framework
     * http://react-toolbox.io/#/components/app_bar
     * https://www.muicss.com/docs/v1/react/tabs
       https://github.com/muicss/mui
+    * material-ui/core https://material-ui.com/
     
   * Blueprint     https://blueprintjs.com/docs/#core/components/button
   * Semantic UI   https://react.semantic-ui.com/elements/button/#types-button
@@ -35,9 +36,11 @@ Components
                  https://andyhu92.github.io/react-bootstrap4-form-validation/#/api/validation-form  
   Form State https://github.com/wsmd/react-use-form-state  
   RippleButton https://codepen.io/OlgaFandikova/pen/zZbLMa  
-  Grid View  https://adazzle.github.io/react-data-grid/docs/examples/simple-grid
+  Grid View  react-virtualized ag-grid grid-table react-data-grid
+            https://adazzle.github.io/react-data-grid/docs/examples/simple-grid
             http://js-grid.com/demos/  react-js-grid
             http://www.jquery-bootgrid.com/Examples
+
   DatePicker http://projects.wojtekmaj.pl/react-calendar/
   * Select2  https://react-select.com/async
 

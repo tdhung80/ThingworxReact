@@ -8,10 +8,10 @@ export const FieldInput = React.forwardRef(
     {
       name,
       label,
-      type,
+      type = "text",
       value,
       placeholder,
-      required,
+      required = false,
       errorMessage,
       floating,
       onBlur,
@@ -53,26 +53,15 @@ export const FieldInput = React.forwardRef(
           <label htmlFor={id} className="form-check-label">
             {label}
           </label>
-          {placeholder && (
-            <small className="form-text text-muted">{placeholder}</small>
-          )}
-          {errorMessage && (
-            <div className="invalid-feedback">{errorMessage}</div>
-          )}
+          {placeholder && <small className="form-text text-muted">{placeholder}</small>}
+          {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
         </div>
       );
     }
     if (type === "textarea") {
       props = { required, rows: 4, ...props, className: "form-control" };
       return (
-        <div
-          className={classNames(
-            "form-group",
-            "bmd-form-group",
-            { "is-focused": focused },
-            { "is-filled": filled }
-          )}
-        >
+        <div className={classNames("form-group", "bmd-form-group", { "is-focused": focused }, { "is-filled": filled })}>
           <label
             htmlFor={id}
             className={classNames(
@@ -85,12 +74,8 @@ export const FieldInput = React.forwardRef(
             {label}
           </label>
           <textarea {...props} />
-          {placeholder && (
-            <small className="form-text text-muted">{placeholder}</small>
-          )}
-          {errorMessage && (
-            <div className="invalid-feedback">{errorMessage}</div>
-          )}
+          {placeholder && <small className="form-text text-muted">{placeholder}</small>}
+          {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
         </div>
       );
     }
@@ -109,14 +94,7 @@ export const FieldInput = React.forwardRef(
       };
     }
     return (
-      <div
-        className={classNames(
-          "form-group",
-          "bmd-form-group",
-          { "is-focused": focused },
-          { "is-filled": filled }
-        )}
-      >
+      <div className={classNames("form-group", "bmd-form-group", { "is-focused": focused }, { "is-filled": filled })}>
         <label
           htmlFor={id}
           className={classNames(
@@ -129,9 +107,7 @@ export const FieldInput = React.forwardRef(
           {label}
         </label>
         <input {...props} />
-        {placeholder && (
-          <small className="form-text text-muted">{placeholder}</small>
-        )}
+        {placeholder && <small className="form-text text-muted">{placeholder}</small>}
         {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
       </div>
     );
