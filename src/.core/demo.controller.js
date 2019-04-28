@@ -1,17 +1,19 @@
-import React, { lazy, useState } from "react";
-import { Route, Link, Redirect, withRouter, Switch } from "react-router-dom";
-import { ErrorBoundary } from "../.ui";
-import shortid from "shortid";
+import React, { lazy } from "react";
+import { withRouter } from "react-router-dom";
+import ErrorBoundary from "../.ui/ErrorBoundary";
+import Page from "./layout/blank";
 
-export default withRouter(({ history }) => {
-  const { pathname } = history.location;
-  console.log("DemoController: " + pathname);
+export default withRouter(({ location, match: { params } }) => {
+  const { pathname } = location;
+  console.log(`DemoController: ${pathname} ${JSON.stringify(params)}`);
 
-  const DemoForm = lazy(() => import("." + pathname));
+  const DemoForm = lazy(() => import("." + pathname + ".js"));
 
   return (
-    <ErrorBoundary>
-      <DemoForm />
-    </ErrorBoundary>
+    <Page>
+      <ErrorBoundary>
+        <DemoForm />
+      </ErrorBoundary>
+    </Page>
   );
 });

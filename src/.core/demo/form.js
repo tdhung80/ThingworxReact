@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Alert, ActionButton as Button, Modal, Form } from "../../.ui";
-import { FieldInput, FieldSelect, useFormState, validateForm } from "../../.ui/FormView";
+import { Alert, ActionButton as Button, Modal } from "../../.ui";
+import { ValidationForm as Form, FieldInput, FieldSelect } from "../../.ui/Forms";
 import translator from "../../.ui/Translator";
 import Page from "../layout/home";
 import { fakeAPI } from "../../services";
@@ -49,6 +49,7 @@ const ViewModel = [
   { name: "search", type: "search", rules: ["required"] },
   { name: "suggestions", type: "textarea", rules: ["required"] }
 ];
+
 const DataModel = {
   yourname: "Hung Tran",
   email: "tdhung80@gmail.com",
@@ -71,9 +72,7 @@ const DataModel = {
 };
 
 export default props => {
-  const [formState, input] = useFormState(DataModel); // take initial model from props.model
   const [formError, setFormError] = useState();
-  const [fieldErrors, setFieldErrors] = useState({});
   const [inProgress, setInProgress] = useState(false);
   const scopeEl = useRef();
   const focusEl = useRef();
@@ -88,29 +87,21 @@ export default props => {
     scopeEl.current.dispatchEvent(new Event("submit", { bubbles: false }));
   };
 
-  const handleFormSubmit = e => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleFormValidate = (model, errors) => {
     console.clear();
-    console.log(formState.values);
+    // TODO: translate error
+    // keys.forEach(field => (errors[field] = i18n.text(errors[field], field)));
+    console.debug(`Model: ${JSON.stringify(model)}`);
+    console.error(`ModelError: ${JSON.stringify(errors)}`);
+    debugger;
+  };
 
-    // react-use-form-state does not report error if a field is not visited
-    // TODO: process custom validation
-    let errors = formState.errors;
-    let errorEl = validateForm(e.currentTarget, errors);
-    if (errorEl) {
-      console.log(errors);
-      // TODO: translate error
-      // keys.forEach(field => (errors[field] = i18n.text(errors[field], field)));
-      setFieldErrors(errors);
-      errorEl && errorEl.focus();
-      return;
-    }
+  const handleFormSubmit = model => {
+    console.clear();
+    console.debug(`"Form.doSubmit(): ${JSON.stringify(model)}`);
 
-    //
-    // no error
-    //
-    console.log("Form.doSubmit()");
+    // model client validation
+    // model server validation, then take action
     setInProgress(true);
     fakeAPI("There are some error happening", true)
       .then(() => {})
@@ -134,133 +125,131 @@ export default props => {
               {formError}
             </Alert>
           )}
-          <Form
-            noValidate
-            validated={Object.keys(fieldErrors).length > 0}
-            onSubmit={handleFormSubmit}
-            className="needs-validation"
-            ref={scopeEl}
-          >
-            <FieldInput
-              label="Your name"
-              placeholder="Hello world"
-              floating={true}
-              required={true}
-              {...input.text("yourname")}
-              errorMessage={fieldErrors.yourname}
-              ref={focusEl}
-            />
-
-            <div className="row">
-              <div className="col">
+          <Form onSubmit={handleFormSubmit} onValidate={handleFormValidate} ref={scopeEl} model={DataModel}>
+            {(input, fieldErrors) => (
+              <>
                 <FieldInput
-                  label="Email"
+                  label="Your name"
+                  placeholder="Hello world"
                   floating={true}
                   required={true}
-                  {...input.email("email")}
-                  errorMessage={fieldErrors.email}
+                  {...input.text("yourname")}
+                  errorMessage={fieldErrors.yourname}
+                  ref={focusEl}
                 />
-              </div>
-              <div className="col">
-                <FieldInput
-                  label="Password"
-                  floating={true}
-                  required={true}
-                  minLength="8"
-                  {...input.password("password")}
-                  errorMessage={fieldErrors.password}
-                />
-              </div>
-            </div>
 
-            <div className="row">
-              <div className="col">
-                <FieldInput
-                  label="Departure"
-                  required={true}
-                  {...input.date("departureDate")}
-                  errorMessage={fieldErrors.departureDate}
-                />
-              </div>
-              <div className="col">
-                <FieldInput
-                  label="Flight Time"
-                  require={true}
-                  {...input.time("flightTime")}
-                  errorMessage={fieldErrors.flightTime}
-                />
-              </div>
-            </div>
+                <div className="row">
+                  <div className="col">
+                    <FieldInput
+                      label="Email"
+                      floating={true}
+                      required={true}
+                      {...input.email("email")}
+                      errorMessage={fieldErrors.email}
+                    />
+                  </div>
+                  <div className="col">
+                    <FieldInput
+                      label="Password"
+                      floating={true}
+                      required={true}
+                      minLength="8"
+                      {...input.password("password")}
+                      errorMessage={fieldErrors.password}
+                    />
+                  </div>
+                </div>
 
-            <div className="row">
-              <div className="col">
-                <FieldInput label="Month" required {...input.month("month")} errorMessage={fieldErrors.month} />
-              </div>
-              <div className="col">
-                <FieldInput label="Week" required {...input.week("week")} errorMessage={fieldErrors.week} />
-              </div>
-            </div>
+                <div className="row">
+                  <div className="col">
+                    <FieldInput
+                      label="Departure"
+                      required={true}
+                      {...input.date("departureDate")}
+                      errorMessage={fieldErrors.departureDate}
+                    />
+                  </div>
+                  <div className="col">
+                    <FieldInput
+                      label="Flight Time"
+                      require={true}
+                      {...input.time("flightTime")}
+                      errorMessage={fieldErrors.flightTime}
+                    />
+                  </div>
+                </div>
 
-            <div className="row mt-3">
-              <div className="col">
-                <FieldInput label="Include Hotel" {...input.checkbox("extra", "hotel")} />
-                <FieldInput label="Include Car" {...input.checkbox("extra", "car")} />
-              </div>
-              <div className="col">
-                <FieldInput label="One-way" {...input.radio("trip", "one-way")} />
-                <FieldInput label="Round Trip" {...input.radio("trip", "round-trip")} />
-              </div>
-            </div>
+                <div className="row">
+                  <div className="col">
+                    <FieldInput label="Month" required {...input.month("month")} errorMessage={fieldErrors.month} />
+                  </div>
+                  <div className="col">
+                    <FieldInput label="Week" required {...input.week("week")} errorMessage={fieldErrors.week} />
+                  </div>
+                </div>
 
-            <div className="row mt-3">
-              <div className="col">
-                <FieldInput
-                  label="Travelers"
-                  required={true}
-                  {...input.number("travelers")}
-                  errorMessage={fieldErrors.travelers}
-                />
-                <FieldInput
-                  label="Price Range"
-                  required={true}
-                  {...input.range("priceRange")}
-                  errorMessage={fieldErrors.priceRange}
-                />
-              </div>
-              <div className="col">
-                <FieldSelect
-                  label="Cabins"
-                  required={true}
-                  {...input.selectMultiple("cabins")}
-                  size="4"
-                  errorMessage={fieldErrors.cabins}
-                >
+                <div className="row mt-3">
+                  <div className="col">
+                    <FieldInput label="Include Hotel" {...input.checkbox("extra", "hotel")} />
+                    <FieldInput label="Include Car" {...input.checkbox("extra", "car")} />
+                  </div>
+                  <div className="col">
+                    <FieldInput label="One-way" {...input.radio("trip", "one-way")} />
+                    <FieldInput label="Round Trip" {...input.radio("trip", "round-trip")} />
+                  </div>
+                </div>
+
+                <div className="row mt-3">
+                  <div className="col">
+                    <FieldInput
+                      label="Travelers"
+                      required={true}
+                      {...input.number("travelers")}
+                      errorMessage={fieldErrors.travelers}
+                    />
+                    <FieldInput
+                      label="Price Range"
+                      required={true}
+                      {...input.range("priceRange")}
+                      errorMessage={fieldErrors.priceRange}
+                    />
+                  </div>
+                  <div className="col">
+                    <FieldSelect
+                      label="Cabins"
+                      required={true}
+                      {...input.selectMultiple("cabins")}
+                      size="4"
+                      errorMessage={fieldErrors.cabins}
+                    >
+                      <option value="economy">Economy</option>
+                      <option value="business">Business</option>
+                      <option value="first">First</option>
+                    </FieldSelect>
+                  </div>
+                </div>
+                <FieldSelect label="Cabin" required={true} {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
+                  <option value="">---</option>
                   <option value="economy">Economy</option>
                   <option value="business">Business</option>
                   <option value="first">First</option>
                 </FieldSelect>
-              </div>
-            </div>
-            <FieldSelect label="Cabin" required={true} {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
-              <option value="">---</option>
-              <option value="economy">Economy</option>
-              <option value="business">Business</option>
-              <option value="first">First</option>
-            </FieldSelect>
 
-            <FieldInput label="Favorite Color" {...input.color("color")} errorMessage={fieldErrors.color} />
-            <FieldInput label="Phone" required {...input.tel("tel")} errorMessage={fieldErrors.tel} />
-            <FieldInput label="Website" required {...input.url("url")} errorMessage={fieldErrors.url} />
-            <FieldInput label="Search" required {...input.search("search")} errorMessage={fieldErrors.search} />
-            <FieldInput
-              label="Suggestions"
-              required
-              length="120"
-              {...input.textarea("suggestions")}
-              errorMessage={fieldErrors.suggestions}
-              type="textarea"
-            />
-            <Button className="d-none" inProgress={inProgress} />
+                <FieldInput label="Favorite Color" {...input.color("color")} errorMessage={fieldErrors.color} />
+                <FieldInput label="Phone" required {...input.tel("tel")} errorMessage={fieldErrors.tel} />
+                <FieldInput label="Website" required {...input.url("url")} errorMessage={fieldErrors.url} />
+                <FieldInput label="Search" required {...input.search("search")} errorMessage={fieldErrors.search} />
+                <FieldInput
+                  label="Suggestions"
+                  required
+                  length="120"
+                  {...input.textarea("suggestions")}
+                  errorMessage={fieldErrors.suggestions}
+                  type="textarea"
+                />
+                <Button className="d-none" inProgress={inProgress} />
+              </>
+            )}
           </Form>
         </Modal.Body>
 

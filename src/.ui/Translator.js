@@ -1,14 +1,12 @@
 //
-// TODO: load i18n resource
+// TODO: load i18n resource, translator.service.js
 //
 const translator = scope => {
   let ctx = {};
 
   ctx.text = key => `?${key}?`; // scope
   ctx.format = (key, params) => {
-    return new Function(`{${Object.keys(params).join(",")}}`, "return `" + ctx.text(key) + "`")(
-      params
-    );
+    return new Function(`{${Object.keys(params).join(",")}}`, "return `" + ctx.text(key) + "`")(params);
   };
 
   // UI

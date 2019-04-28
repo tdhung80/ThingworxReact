@@ -1,14 +1,21 @@
 import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Route, Link, Redirect, withRouter, Switch } from "react-router-dom";
+import { PrivateRoute } from "../.ui";
 
-export default withRouter(({ history }) => {
-  const path = history.location.pathname;
-  console.log("UserController: " + path);
+const UserPage = lazy(() => import("./layout/user"));
+const DashboardView = lazy(() => import("./user/dashboard"));
+
+export default withRouter(({ history, location, match: { params } }) => {
+  const { pathname } = location;
+  console.log(`UserController: ${pathname} ${JSON.stringify(params)}`);
 
   return (
-    // <Switch>
-    //   <Route path="/user/login" component={LoginPage} />
-    // </Switch>
-    <div>Users Page</div>
+    <UserPage>
+      <Switch>
+        <PrivateRoute component={DashboardView} />
+      </Switch>
+    </UserPage>
   );
 });
+
+// const NoMatch = withRouter(({ history }) => <h1>No Match: {history.location.pathname}</h1>);

@@ -1,5 +1,4 @@
 export * from "react-bootstrap";
-export * from "./ErrorBoundary";
 //export * from "./FormView";
 //export * from "./ListView";
 export * from "./Buttons";
@@ -12,6 +11,7 @@ export const debounce = (fn, delay) => {
     const context = this;
     timer && clearTimeout(timer);
     timer = setTimeout(() => {
+      console.debug("debounce-callback");
       fn.apply(context, args);
     }, delay);
   };

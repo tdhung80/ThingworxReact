@@ -3,8 +3,8 @@ import React from "react";
 //import { Button } from "mdbreact"
 import Button from "muicss/lib/react/button";
 
-function ActionButton(props) {
-  var { inProgress, ...other } = props;
+export const ActionButton = props => {
+  var { inProgress, ...other } = props; // don't change var to let/const
 
   if (inProgress) {
     other = { ...other, disabled: true };
@@ -16,6 +16,4 @@ function ActionButton(props) {
     );
   }
   return <Button {...other} />;
-}
-
-export default React.memo(ActionButton);
+};

@@ -1,9 +1,10 @@
 import faker from "faker";
 
-export default function createRowData(count) {
+export default function createRowData(count, startId) {
+  startId = startId || 0;
   return [...Array(count).keys()].map(index => {
     return {
-      id: index,
+      id: startId + index,
       avartar: faker.image.avatar(),
       county: faker.address.county(),
       email: faker.internet.email(),
@@ -19,5 +20,17 @@ export default function createRowData(count) {
       jobArea: faker.name.jobArea(),
       jobType: faker.name.jobType()
     };
+  });
+}
+
+const createChildRows = (count, startId) => {
+  return [...Array(count).keys()].map(i => createRowData(i, startId || 0));
+};
+
+export function createRowDataWithSubrows(count, maxSubRowCount) {
+  return [...Array(count).keys()].map(i => {
+    const subRowCount = Math.floor((maxSubRowCount || 3) * Math.random());
+    const teamMembers = createChildRows(subRowCount, count + i * subRowCount);
+    return { ...createRowData(i), teamMembers };
   });
 }

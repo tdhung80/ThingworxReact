@@ -1,39 +1,50 @@
-import * as server from "./backend";
-import { configureFakeBackend } from "./backend-fake";
-configureFakeBackend(0);
-
 const serverURI = `https://domain.com/Thingworx/`;
 // https://community.ptc.com/t5/IoT-Tech-Tips/Make-a-REST-call-from-a-website-to-Thingworx-platform/m-p/534384
 
-const serviceUrls = {
-  login: `Resources/CurrentSessionInfo/Services/GetCurrentUserGroups`,
-  logout: `Server/*/Services/Logout`
+const apiURI = {
+  login: `${serverURI}Resources/CurrentSessionInfo/Services/GetCurrentUserGroups`,
+  logout: `${serverURI}Server/*/Services/Logout`
 };
 
-export default serviceUrls;
+export default apiURI;
 
-export const fakeAPI = (result, error = false, timeout = 1000) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (error) reject(result);
-      else resolve(result);
-    }, timeout);
-  });
-};
+//
+// TODO: use axios instead of fetch API
+//
 
-export function service(serviceUrl, data) {
-  debugger;
-  return server.post(
-    `${serverURI}${serviceUrl}`,
-    data,
-    options => (options.headers["Authorization"] = "Basic " + btoa(`bells:c9.0!`))
+export function post(url, data) {
+  const requestOptions = {
+    method: "POST",
+    headers: Object.assign({
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }),
+    mode: "no-cors",
+    cache: "no-cache"
+  };
+
+  if (url === apiURI.login) {
+    requestOptions.headers["Authorization"] = "Basic " + btoa(data.username + ":" + data.password);
+  } else {
+    requestOptions.body = data ? JSON.stringify(data) : "{}";
+  }
+
+  return fetch(url, requestOptions).then(res =>
+    res.text().then(text => {
+      const data = text && JSON.parse(text);
+      if (!res.ok) {
+        if (res.status === 401) {
+          // auto logout if 401 response returned from api
+          localStorage.removeItem("user");
+          location.reload(true);
+        }
+        const error = (data && data.message) || res.statusText;
+        return Promise.reject(error);
+      }
+      return data;
+    })
   );
 }
-
-// async function fetchMyAPI() {
-//     await fakeAPI(3000);
-//     ...
-// }
 
 /*
  * FetchAPI { cache: default, no-stare, reload, no-cache, force-cache }

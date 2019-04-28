@@ -40,6 +40,7 @@ Components
             https://adazzle.github.io/react-data-grid/docs/examples/simple-grid
             http://js-grid.com/demos/  react-js-grid
             http://www.jquery-bootgrid.com/Examples
+  Chart      react-chartist
 
   DatePicker http://projects.wojtekmaj.pl/react-calendar/
   * Select2  https://react-select.com/async
