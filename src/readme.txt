@@ -57,24 +57,12 @@ React
 TODO
   Cache Code Entities    
   Tree / Constainers / Drag Drop / Menu & Toolbars
+  Backend: NodeJS + ExpressJS / MongoDB, https://keystonejs.com/getting-started/setting-up/part-1
 
 CodeSandbox + WebPack
   https://codesandbox.io/s/github/Narvey/react-toolbox-sandbox
 
-Google Analytics
-<script>
-    (function (i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-        a = s.createElement(o),
-            m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-    ga('create', 'UA-72459938-1', 'auto');
-    ga('send', 'pageview');
-</script>
-<script type="text/javascript" src="5ade4ebbe1e89a543f94.app.js?5ade4ebbe1e89a543f94" charset="UTF-8"></script></body> 
+CSS3
+  transform: translate(-50%,-50%) rotate(-90deg);
+	transition: all .3s cubic-bezier(.175,.885,.32,1.275);	
+  animation: 

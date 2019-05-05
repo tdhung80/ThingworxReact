@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Alert, ActionButton, Button, Modal, ProgressBar } from "../../.ui";
 import translator from "../../.ui/Translator";
 import ReactDataGrid from "react-data-grid";
-import { fakeAPI } from "../../services";
+import { fakeAPI } from "../../services/backend-fake";
 
 const {
   Editors,
@@ -122,7 +122,6 @@ const columns = [
       return (
         <>
           <Button variant="primary">Action 1</Button>
-          <Button variant="primary">Action 2</Button>
         </>
       );
     }

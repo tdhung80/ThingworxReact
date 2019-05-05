@@ -1,6 +1,20 @@
  // @import url(//www.minvps.net/mdb.min.css);
 
  .App {
+   
+   button.btn {
+    font-size: 1.4rem;
+    margin-bottom: 0rem;
+    padding: 1rem 2rem;
+
+    &::placeholder, &::-webkit-input-placeholder {
+      font-size: 1.4rem;
+    }
+   }
+
+   select:not(.custom-file-control):not(.form-control) {
+      -webkit-appearance: menulist;
+   }
 
   .form-control, .form-check-label { font-size: 1.4rem; }
   .form-check-label { padding-top: 0.5rem; margin-bottom: 1.3rem; }
@@ -18,6 +32,10 @@
     }
   } 
 
+  .input-group input.form-control {
+    background-image: linear-gradient(0deg,#3f51b5 3px,rgba(63,81,181,0) 0),linear-gradient(0deg,rgba(0,0,0,.26) 1px,transparent 0);
+  }
+
   .bmd-form-group {
     //.checkbox, .radio label, label { font-size: 1.4rem } 
     .bmd-label-static, .bmd-label-floating { font-size: 1.1rem; top: 0.5rem; }
@@ -27,7 +45,15 @@
 
   }  
 
- }
+  .bs-stepper {
+    .step-trigger {
+      font-size: 1.4rem;
+    }
+    .bs-stepper-content {
+      position: relative
+    }
+  }
+}
 
 /* 
 * Material Design for Bootstrap

@@ -3,9 +3,10 @@ export * from "react-bootstrap";
 //export * from "./ListView";
 export * from "./Buttons";
 export * from "./Routes";
+export * from "./Stepper";
 //export * from "./Translator";
 
-export const debounce = (fn, delay) => {
+export const useDebounce = (fn, delay) => {
   let timer = null;
   return function(...args) {
     const context = this;

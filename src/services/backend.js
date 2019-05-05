@@ -1,49 +1,87 @@
-const serverURI = `https://domain.com/Thingworx/`;
-// https://community.ptc.com/t5/IoT-Tech-Tips/Make-a-REST-call-from-a-website-to-Thingworx-platform/m-p/534384
+import TWServerURI from "./backend.settings";
+import * as userService from "./user.service";
 
 const apiURI = {
-  login: `${serverURI}Resources/CurrentSessionInfo/Services/GetCurrentUserGroups`,
-  logout: `${serverURI}Server/*/Services/Logout`
+  getCurrentUser: `Resources/CurrentSessionInfo/Services/GetCurrentUser`,
+  login: `Resources/CurrentSessionInfo/Services/GetCurrentUserGroups`,
+  logout: `Server/*/Services/Logout`
+
+  // GET: /Properties, /PropertyDefinitions, /ServiceDefinitions, /EventDefinitions
 };
 
 export default apiURI;
+export { EntityCollections, GenericServices } from "./backend.settings";
 
 //
-// TODO: use axios instead of fetch API
+// TODO: use axios "cross browser" instead of fetch API
 //
+let isLoginProcessing = false; // NTLM login
 
-export function post(url, data) {
+export async function send(url, data) {
   const requestOptions = {
-    method: "POST",
-    headers: Object.assign({
+    headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
-    }),
-    mode: "no-cors",
+    },
+    //mode: "no-cors", // MUST run in cors mode
     cache: "no-cache"
   };
 
-  if (url === apiURI.login) {
+  // URL decorator
+  if (url === apiURI.login && data && data.username) {
+    url = `Users/${data.username}/Properties`;
     requestOptions.headers["Authorization"] = "Basic " + btoa(data.username + ":" + data.password);
-  } else {
-    requestOptions.body = data ? JSON.stringify(data) : "{}";
   }
 
-  return fetch(url, requestOptions).then(res =>
-    res.text().then(text => {
-      const data = text && JSON.parse(text);
-      if (!res.ok) {
-        if (res.status === 401) {
-          // auto logout if 401 response returned from api
-          localStorage.removeItem("user");
-          location.reload(true);
-        }
-        const error = (data && data.message) || res.statusText;
-        return Promise.reject(error);
-      }
-      return data;
-    })
-  );
+  // TW REST API rules
+  const method = (requestOptions.method = /\/[Ss]ervices\//.test(url) ? "POST" : "GET");
+  if (method === "POST") {
+    requestOptions.body = data ? (data instanceof Object ? JSON.stringify(data) : data) : "{}";
+  } else if (method === "GET" && data) {
+    // TODO: convert data to exlicit query string
+    requestOptions.body = null;
+  }
+
+  if (!/^http(s?):\/\//i.test(url)) {
+    url = TWServerURI + url;
+  }
+
+  console.debug(`${method} ${url}`);
+  const res = await fetch(url, requestOptions);
+  const text = await res.text();
+
+  // text should be formated like a INFOTABLE { dataShape: {}, rows: [] }
+  // or Entity Not Found : [{EntityName}}]
+  // or Not authorized for ServiceInvoke on GetServiceDefinition in {CollectionName}
+  data = text && (/^{.*}$/.test(text) ? JSON.parse(text) : text);
+  if (!res.ok) {
+    throw (data && data.message) || res.statusText;
+  }
+
+  if (!isLoginProcessing) {
+    await handleNTLM();
+  }
+
+  return data;
+}
+
+async function handleNTLM() {
+  // the current session is already authenticaetd by NTLM login browser dialog
+  if (!userService.isAuthenticated() || userService.isAnonymous()) {
+    console.debug("NTLM: get login information");
+    try {
+      isLoginProcessing = true;
+      let res = await send(apiURI.getCurrentUser);
+      console.debug(res);
+      let username = res.rows[0].result;
+      res = await send(`Users/${username}/Properties`);
+      console.debug(res);
+      let user = res.rows[0];
+      userService.setUser({ ...user, username });
+    } finally {
+      isLoginProcessing = false;
+    }
+  }
 }
 
 /*

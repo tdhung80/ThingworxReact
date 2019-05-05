@@ -12,10 +12,12 @@ export const FieldInput = React.forwardRef(
       value,
       placeholder,
       required = false,
+      maxLength = 255,
       errorMessage,
       floating,
       onBlur,
       onFocus,
+      children,
       ...props
     },
     ref
@@ -46,7 +48,7 @@ export const FieldInput = React.forwardRef(
     // help-block => bmd-help, "<small form-text text-muted
     // valid-feedback / invalid-feedback
     if (type === "checkbox" || type === "radio") {
-      props = { ...props, type, className: "form-check-input" };
+      props = { type, ...props, className: "form-check-input" };
       return (
         <div className="from-group form-check">
           <input {...props} />
@@ -59,7 +61,7 @@ export const FieldInput = React.forwardRef(
       );
     }
     if (type === "textarea") {
-      props = { required, rows: 4, ...props, className: "form-control" };
+      props = { required, rows: 4, maxLength, ...props, className: "form-control" };
       return (
         <div className={classNames("form-group", "bmd-form-group", { "is-focused": focused }, { "is-filled": filled })}>
           <label
@@ -73,7 +75,7 @@ export const FieldInput = React.forwardRef(
           >
             {label}
           </label>
-          <textarea {...props} />
+          {typeof children === "function" ? children(() => <textarea {...props} />) : <textarea {...props} />}
           {placeholder && <small className="form-text text-muted">{placeholder}</small>}
           {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
         </div>
@@ -83,14 +85,15 @@ export const FieldInput = React.forwardRef(
       // TODO
     } else if (type === "range") {
       // custom-range
-      props = { required, ...props, type, className: "form-control-range" };
+      props = { required, type, ...props, className: "form-control-range" };
     } else {
       props = {
-        ...props,
+        autoComplete: "off",
         type,
         required,
-        className: "form-control",
-        autoComplete: "off"
+        maxLength,
+        ...props,
+        className: "form-control"
       };
     }
     return (
@@ -106,7 +109,7 @@ export const FieldInput = React.forwardRef(
         >
           {label}
         </label>
-        <input {...props} />
+        {typeof children === "function" ? children(() => <input {...props} />) : <input {...props} />}
         {placeholder && <small className="form-text text-muted">{placeholder}</small>}
         {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
       </div>

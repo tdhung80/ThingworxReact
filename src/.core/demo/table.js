@@ -17,7 +17,9 @@ export default () => {
       </Modal.Header>
 
       <Modal.Body>
-        <div>Hello</div>
+        <div>
+          https://codesandbox.io/s/github/tannerlinsley/react-table/tree/master/archives/v6-examples/react-table-server-side-data
+        </div>
       </Modal.Body>
 
       <Modal.Footer>

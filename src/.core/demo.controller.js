@@ -1,7 +1,9 @@
 import React, { lazy } from "react";
-import { withRouter } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
+import { PrivateRoute } from "../.ui";
 import ErrorBoundary from "../.ui/ErrorBoundary";
 import Page from "./layout/blank";
+import * as service from "../services/user.service";
 
 export default withRouter(({ location, match: { params } }) => {
   const { pathname } = location;
@@ -9,10 +11,16 @@ export default withRouter(({ location, match: { params } }) => {
 
   const DemoForm = lazy(() => import("." + pathname + ".js"));
 
+  // Use NTLM
+  service.loginAsAnonymous();
+
   return (
     <Page>
       <ErrorBoundary>
-        <DemoForm />
+        <Switch>
+          <PrivateRoute exact path="/demo/service" component={DemoForm} />
+          <Route component={DemoForm} />
+        </Switch>
       </ErrorBoundary>
     </Page>
   );

@@ -17,10 +17,10 @@ export default withRouter(({ history }) => {
 
   useEffect(() => {
     console.log("Login.focus()");
-    // focusEl.current.focus();
+    focusEl.current.focus();
   }, []);
 
-  const handleAction = () => scopeEl.current.dispatchEvent(new Event("submit", { bubbles: false }));
+  const handleAction = () => scopeEl.current.submit();
 
   const handleFormSubmit = model => {
     if (inProgress) return;
@@ -28,7 +28,7 @@ export default withRouter(({ history }) => {
 
     setInProgress(true);
     service
-      .login(model.user, model.pass)
+      .login(model.user, model.pass, model.remember)
       .then(() => {
         console.log("Login success");
         const state = history.location.state;
@@ -37,8 +37,8 @@ export default withRouter(({ history }) => {
       .catch(error => {
         console.error("Login failed! " + error);
         focusEl.current.focus();
-        setFormError(error);
-        //setPassword("");
+        setFormError(error || "Internal Server Error");
+        // setPassword(""); // TODO: wait and check this possibility from react-use-form-state
         setInProgress(false);
       });
   };

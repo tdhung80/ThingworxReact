@@ -3,7 +3,7 @@ import { Alert, ActionButton as Button, Modal } from "../../.ui";
 import { ValidationForm as Form, FieldInput, FieldSelect } from "../../.ui/Forms";
 import translator from "../../.ui/Translator";
 import Page from "../layout/home";
-import { fakeAPI } from "../../services";
+import { fakeAPI } from "../../services/backend-fake";
 
 const i18n = translator("FORM_FORM_DEMO");
 
@@ -83,8 +83,7 @@ export default props => {
   }, []);
 
   const handleAction = () => {
-    // scopeEl.current.submit(); // there is a bug, that doesn't call onSubmit
-    scopeEl.current.dispatchEvent(new Event("submit", { bubbles: false }));
+    scopeEl.current.submit();
   };
 
   const handleFormValidate = (model, errors) => {
@@ -93,7 +92,6 @@ export default props => {
     // keys.forEach(field => (errors[field] = i18n.text(errors[field], field)));
     console.debug(`Model: ${JSON.stringify(model)}`);
     console.error(`ModelError: ${JSON.stringify(errors)}`);
-    debugger;
   };
 
   const handleFormSubmit = model => {
@@ -242,7 +240,7 @@ export default props => {
                 <FieldInput
                   label="Suggestions"
                   required
-                  length="120"
+                  maxLength={1000}
                   {...input.textarea("suggestions")}
                   errorMessage={fieldErrors.suggestions}
                   type="textarea"
