@@ -53,7 +53,7 @@ export const Stepper = React.forwardRef(({ steps = [], ...props }, ref) => {
           const { content, style } = step;
           return (
             <div id={step.id} className="content" role="tabpanel" style={style}>
-              {content}
+              {typeof content === "function" ? content() : content}
             </div>
           );
         })}

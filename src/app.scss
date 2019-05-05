@@ -169,7 +169,7 @@ html.App {
 	.react-autosuggest__suggestions-container--open {
 		display: block;
 		position: absolute;
-		top: 2.8rem;
+		top: 6.1rem;
 		width: 100%;
 		border: 1px solid #aaa;
 		background-color: #fff;
@@ -196,4 +196,7 @@ html.App {
 		background-color: #ddd;
 	}
 	
+	.react-autosuggest__suggestion-match {
+		// color: red;
+	}
 }

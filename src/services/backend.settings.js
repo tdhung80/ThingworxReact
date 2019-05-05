@@ -38,7 +38,15 @@ export const EntityCollections = [
   "Logs"
 ].sort();
 
-export const GenericServices = [
+export const EntityHandlers = [
+  //"Properties",
+  //"PropertyDefinitions",
+  //"EventDefinitions",
+  "ServiceDefinitions",
+  "Services"
+].sort();
+
+export const EntityGenericServices = [
   "AcknowledgeAlert",
   "AcknowledgeAllAlerts",
   "AddBooleanValueStreamEntry",

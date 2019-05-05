@@ -6,6 +6,14 @@ import { useFormState } from "react-use-form-state";
 export * from "./Fields.FieldInput";
 export * from "./Fields.FieldSelect";
 
+export function useFormInput(initialValue) {
+  const [value, setValue] = useState(initialValue);
+  const handleChange = (e, { newValue }) => {
+    setValue(newValue || e.target.valid);
+  };
+  return [{ value, onChange: handleChange }, setValue];
+}
+
 export const ValidationForm = React.forwardRef(({ model, children, onSubmit, onValidate, ...props }, ref) => {
   const [formState, input] = useFormState({ ...model }); // take initial model from props.model
   const [fieldErrors, setFieldErrors] = useState({});

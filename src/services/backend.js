@@ -10,7 +10,7 @@ const apiURI = {
 };
 
 export default apiURI;
-export { EntityCollections, GenericServices } from "./backend.settings";
+export * from "./backend.settings";
 
 //
 // TODO: use axios "cross browser" instead of fetch API
@@ -21,7 +21,8 @@ export async function send(url, data) {
   const requestOptions = {
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json; charset=utf-8"
+      // 'X-Requested-With': 'XMLHttpRequest'
     },
     //mode: "no-cors", // MUST run in cors mode
     cache: "no-cache"
