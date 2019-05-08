@@ -50,6 +50,11 @@ API References
   * https://fezvrasta.github.io/bootstrap-material-design/docs/4.0/material-design/forms/ bmd-*
   https://andyhu92.github.io/react-bootstrap4-form-validation/#/example/custom-validation-control
 
+Effect
+  react-beautiful-dnd 
+  react-dnd react-dnd-html5-backend
+  react-drag-and-drop
+
 React
   JSX https://zhenyong.github.io/react/docs/reusable-components.html
   ReactDOM.findDOMNode(this).parentNode.getAttribute("id")
@@ -66,3 +71,21 @@ CSS3
   transform: translate(-50%,-50%) rotate(-90deg);
 	transition: all .3s cubic-bezier(.175,.885,.32,1.275);	
   animation: 
+
+Application
+  ViewManager.ActiveView
+  KeyboardManager => SystemKey, ShortcutKey, HotKey
+    react-keydown
+    react-keyboard 
+    react-keyboard-event-handler
+  MouseManager => Resize, Drag Drop
+
+Thingworx
+  UserManagementSubsystem
+    GlobalSessionProperties
+  UserExtensions  
+  SupportPackageTool: http://support.ptc.com/help/thingworx_hc/thingworx_8_hc/en/#page/ThingWorx%2FHelp%2FExtensibility%2FSupportPackageTool.html
+    SupportTools.Entity / SupportTools.Repository
+    <tomcatDir>/logs/runstacktrace
+  
+  

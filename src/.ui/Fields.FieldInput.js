@@ -61,7 +61,17 @@ export const FieldInput = React.forwardRef(
       );
     }
     if (type === "textarea") {
-      props = { required, rows: 4, maxLength, ...props, className: "form-control" };
+      props = {
+        autoComplete: "off",
+        autoCorrect: "off",
+        autoCapitalize: "off",
+        spellCheck: "false",
+        required,
+        rows: 4,
+        maxLength,
+        ...props,
+        className: "form-control"
+      };
       return (
         <div className={classNames("form-group", "bmd-form-group", { "is-focused": focused }, { "is-filled": filled })}>
           <label
@@ -89,6 +99,9 @@ export const FieldInput = React.forwardRef(
     } else {
       props = {
         autoComplete: "off",
+        autoCorrect: "off",
+        autoCapitalize: "off",
+        spellCheck: "false",
         type,
         required,
         maxLength,

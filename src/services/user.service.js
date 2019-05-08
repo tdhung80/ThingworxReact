@@ -34,10 +34,14 @@ export async function loginAsAnonymous() {
   return { username: ANONYMOUS_KEY };
 }
 
-export function logout(notify = true) {
+export function logout(notify = true, func) {
   if (isAuthenticated()) {
-    setUser();
-    location.reload(true);
+    if (typeof func === "function") {
+      func();
+    } else {
+      setUser();
+      location.reload(true);
+    }
     notify && server.post(apiURI.logout);
   }
 }

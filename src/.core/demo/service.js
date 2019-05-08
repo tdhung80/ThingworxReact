@@ -7,6 +7,7 @@ import parse from "autosuggest-highlight/parse";
 import ReactTable from "../../.ui/Table";
 import "react-table/react-table.css";
 import JSONTree from "react-json-tree";
+import * as themes from "base16"; // https://codesandbox.io/s/w6lkxqxqll
 import JSONViewer from "react-json-viewer";
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
@@ -29,7 +30,7 @@ export default () => {
   const [formError, setFormError] = useState();
   const [serviceArgs, setServiceArgs] = useState(Model.data);
   const [inProgress, setInProgress] = useState(false);
-  const [formState, setFormState] = useState({ GetFetchDefinitionButtonState: false, JSONresult: null });
+  const [formState, setFormState] = useState({ JSONResult: null });
   const [grid, setGrid] = useState({
     columns: [
       {
@@ -44,10 +45,9 @@ export default () => {
   const [searchInput, setSearchInput] = useFormInput("");
 
   const searchRef = useRef();
-  const focusEl = useRef();
   const scopeEl = useRef(); // form
   const stepperEl = useRef();
-  const stepContentStyle = { position: "relative", height: "55.4rem" };
+  const stepContentStyle = { position: "relative", height: "56rem", paddingBottom: "4.8rem" };
 
   // const setSearchInput = (value = "") => {
   //   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
@@ -56,8 +56,9 @@ export default () => {
   //   input.dispatchEvent(new Event("input", { bubbles: true }));
   // };
 
-  const getServiceDefinition = () => {
-    const { serviceUrl } = scopeEl.current.getModel();
+  const getServiceDefinition = value => {
+    // const { serviceUrl } = scopeEl.current.getModel();
+    const serviceUrl = value || searchInput.value;
     const serviceName = serviceUrl.substr(serviceUrl.lastIndexOf("/") + 1);
     if (!serviceName) {
       setFormError("Not a valid service URL. {Collection}/{Entity}/Services/{Service}");
@@ -83,7 +84,7 @@ export default () => {
       })
       .catch(reason => {
         console.error(reason);
-        focusEl.current.focus();
+        searchRef.current.input.focus();
         setFormError(reason);
       });
   };
@@ -119,6 +120,7 @@ export default () => {
               if (field.baseType === "INFOTABLE") {
                 return {
                   Header: field.name,
+                  width: field.name.length * 18,
                   accessor: field.id,
                   Cell: () => <span>JSON</span>
                 };
@@ -154,8 +156,7 @@ export default () => {
 
   const debounceLoadSuggestions = useDebounce((value, reason) => {
     console.log("debounceLoadSuggestions: " + value + " " + reason);
-    // Check if need to load
-    // TODO: keep searched terms to minimum server requests
+
     const tokens = value.split("/");
     const entityCollection = tokens[0];
     if (server.EntityCollections.indexOf(entityCollection) !== -1) {
@@ -164,16 +165,21 @@ export default () => {
         case 2: {
           // entityCollection/*
           const search = tokens[1];
+          // TODO: don't search the same term in 5 minutes when no result
           server
             .send("Resources/EntityServices/Services/GetEntityList", {
-              maxItems: 1000,
+              maxItems: 200,
               nameMask: search + "*",
               type: entityCollection.substr(0, entityCollection.length - 1) // convert collectionName to entityName
             })
             .then(res => {
-              const suggestions = res.rows.map(r => entityCollection + "/" + r.name);
+              const suggestions = res.rows.map(r => entityCollection + "/" + r.name).sort();
               setSource([...source, ...suggestions]);
-              loadSuggestions(value, suggestions);
+              loadSuggestions(searchInput.value, suggestions);
+            })
+            .catch(reason => {
+              console.error(reason);
+              setFormError(reason);
             });
           break;
         }
@@ -182,13 +188,19 @@ export default () => {
           const entity = tokens[1];
           const handler = tokens[2];
           if (handler === "Services") {
-            server.send(`${entityCollection}/${entity}/ServiceDefinitions`).then(res => {
-              const suggestions = _.filter(res.rows, r => server.EntityGenericServices.indexOf(r.name) === -1).map(
-                r => `${entityCollection}/${entity}/Services/${r.name}`
-              );
-              setSource([...source, ...suggestions]);
-              loadSuggestions(value, suggestions);
-            });
+            server
+              .send(`${entityCollection}/${entity}/ServiceDefinitions`)
+              .then(res => {
+                const suggestions = _.filter(res.rows, r => server.EntityGenericServices.indexOf(r.name) === -1)
+                  .map(r => `${entityCollection}/${entity}/Services/${r.name}`)
+                  .sort();
+                setSource([...source, ...suggestions]);
+                loadSuggestions(searchInput.value, suggestions);
+              })
+              .catch(reason => {
+                console.error(reason);
+                setFormError(reason);
+              });
           } else {
             // no suggestion
             setSuggestions([]);
@@ -199,10 +211,21 @@ export default () => {
     }
   }, 500);
   const onSuggestionsFetchRequested = ({ value, reason }) => {
-    console.debug("onSuggestionsFetchRequested: " + value + " " + reason);
+    console.debug(`onSuggestionsFetchRequested: '${value}' ${reason} '${searchInput.value}'`);
+    if (value.startsWith("Loading...")) return;
+
     switch (reason) {
       case "escape-pressed":
-        setSearchInput("");
+        // AutoSuggest pass an empty value in this scenario
+        value = searchInput.value;
+        if (value.endsWith("/")) value = value.substr(0, value.length - 1);
+        else value = value.replace(new RegExp(value.substr(value.lastIndexOf("/") + 1) + "$"), "");
+        setSearchInput(value);
+        if (value === "") {
+          loadSuggestions("", server.EntityCollections);
+        } else {
+          onSuggestionsFetchRequested({ value, reason: "suggestion-selected" });
+        }
         break;
       case "input-changed":
       case "suggestion-selected":
@@ -211,7 +234,7 @@ export default () => {
         let n = tokens.length;
         if (reason === "suggestion-selected") {
           if (n === 1 && server.EntityCollections.indexOf(entityCollection) >= 0) {
-            value = entityCollection + "/";
+            value = `${entityCollection}/`;
             n = 2;
           }
         }
@@ -220,20 +243,34 @@ export default () => {
             // EntityCollection
             loadSuggestions(value, server.EntityCollections);
             break;
-          case 3:
+          case 3: {
             // EntityCollection/Entity/Handler
             const entity = tokens[1];
-            loadSuggestions(value, server.EntityHandlers.map(s => entityCollection + "/" + entity + "/" + s));
+            let suggestions = loadSuggestions(
+              value,
+              server.EntityHandlers.map(s => `${entityCollection}/${entity}/${s}`)
+            );
+            if (suggestions.length === 1 && reason === "suggestion-selected") {
+              // console.log('fetch ' + value)
+              onSuggestionsFetchRequested({ value: value + "/", reason });
+            }
             break;
+          }
           case 2:
-          case 4:
+          case 4: {
             // EntityCollection/Entity
             // EntityCollection/Entity/Services/Service
             let suggestions = loadSuggestions(value, _.filter(source, s => s.split("/").length === n));
             if (suggestions.length === 0) {
               debounceLoadSuggestions(value, reason);
+            } else if (n === 2 && suggestions.length === 1 && reason === "suggestion-selected") {
+              onSuggestionsFetchRequested({ value: value + "/", reason });
+            } else if (n === 4 && suggestions.length === 1 && reason === "suggestion-selected") {
+              setSuggestions([]);
+              getServiceDefinition(value);
             }
             break;
+          }
           default:
             setSuggestions([]);
             break;
@@ -249,7 +286,7 @@ export default () => {
     e.stopPropagation();
     e.preventDefault();
     console.debug("onSuggestionSelected: " + suggestionValue);
-    setSearchInput(suggestionValue);
+    if (!suggestionValue.startsWith("Loading...")) setSearchInput(suggestionValue);
   };
   const renderSuggestion = (suggestion, { query }) => {
     const matches = match(suggestion, query);
@@ -272,7 +309,19 @@ export default () => {
     <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
       <Modal.Header>
         <h1>{i18n.text("Service Playground")}</h1>
-        <span>{service.getUser().username}</span>
+        {service.isAnonymous() ? (
+          <span>{service.getUser().username}</span>
+        ) : (
+          <a
+            href="#"
+            onClick={() => {
+              service.logout(true, () => service.loginAsAnonymous());
+              return false;
+            }}
+          >
+            {service.getUser().username}
+          </a>
+        )}
       </Modal.Header>
 
       <Modal.Body>
@@ -314,37 +363,22 @@ export default () => {
                               floating={true}
                               required={true}
                               {...inputProps}
-                            >
-                              {makeInput => (
-                                <InputGroup className="mb-3">
-                                  {makeInput()}
-                                  <InputGroup.Append>
-                                    <Button
-                                      variant="outline-secondary"
-                                      onClick={getServiceDefinition}
-                                      disabled={!formState.GetFetchDefinitionButtonState}
-                                    >
-                                      {i18n.action("Fetch")}
-                                    </Button>
-                                  </InputGroup.Append>
-                                </InputGroup>
-                              )}
-                            </FieldInput>
+                            />
                           )}
                         />
-                        <div style={{ maxWidth: "140rem", maxHeight: "100%" }}>
+                        <div style={{ maxWidth: "140rem", maxHeight: "100%", height: "40.5rem" }}>
                           <JSONInput
                             placeholder={serviceArgs}
-                            theme="light_mitsuketa_tribute"
+                            //theme="light_mitsuketa_tribute"
                             locale={locale}
                             theme="dark_vscode_tribute"
-                            height="40rem"
+                            height="100%"
                             width="100%"
                             onChange={({ jsObject }) => jsObject && setServiceArgs(jsObject)}
                           />
                         </div>
                         <ActionButton variant="primary" className="pa b0 r0" type="submit" inProgress={inProgress}>
-                          {i18n.action("Process")}
+                          {i18n.action("Execute")}
                         </ActionButton>
                       </>
                     )}
@@ -359,8 +393,8 @@ export default () => {
                 const { JSONResult } = formState;
                 if (JSONResult) {
                   return (
-                    <div style={{ height: "49rem", overflow: "auto" }}>
-                      <JSONTree data={JSONResult} />
+                    <div className="json-tree-container" style={{ height: "49rem" }}>
+                      <JSONTree data={JSONResult} theme={themes.bright} invertTheme={false} />
                       <ActionButton variant="primary" className="pa b0 r0" onClick={() => stepperEl.current.previous()}>
                         {i18n.action("Back")}
                       </ActionButton>
@@ -374,7 +408,7 @@ export default () => {
                       columns={grid.columns}
                       defaultPageSize={10}
                       minRows={10}
-                      className="-striped -highlight"
+                      className="-striped -highlight mt-4"
                       filterable
                       defaultFilterMethod={(filter, row) => {
                         let cellValue = String(row[filter.id]);

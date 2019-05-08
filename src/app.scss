@@ -199,4 +199,20 @@ html.App {
 	.react-autosuggest__suggestion-match {
 		// color: red;
 	}
+
+	.json-tree-container {
+		background-color: black;
+		overflow: auto;
+
+		& > ul {
+			height: 100%;
+		}
+
+		& {
+			label {
+				font-size: 1.4rem;
+			}
+
+		}
+	}
 }

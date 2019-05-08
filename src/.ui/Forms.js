@@ -9,7 +9,7 @@ export * from "./Fields.FieldSelect";
 export function useFormInput(initialValue) {
   const [value, setValue] = useState(initialValue);
   const handleChange = (e, { newValue }) => {
-    setValue(newValue || e.target.valid);
+    setValue(newValue || e.target.value);
   };
   return [{ value, onChange: handleChange }, setValue];
 }

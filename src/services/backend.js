@@ -17,6 +17,10 @@ export * from "./backend.settings";
 //
 let isLoginProcessing = false; // NTLM login
 
+export async function post(url, data) {
+  await send(url, data);
+}
+
 export async function send(url, data) {
   const requestOptions = {
     headers: {
@@ -39,8 +43,13 @@ export async function send(url, data) {
   if (method === "POST") {
     requestOptions.body = data ? (data instanceof Object ? JSON.stringify(data) : data) : "{}";
   } else if (method === "GET" && data) {
-    // TODO: convert data to exlicit query string
     requestOptions.body = null;
+    const keys = Object.keys(data);
+    if (keys.length > 0) {
+      url +=
+        (url.lastIndexOf("?") === -1 ? "?" : "&") +
+        keys.map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key])).join("&");
+    }
   }
 
   if (!/^http(s?):\/\//i.test(url)) {
@@ -48,8 +57,11 @@ export async function send(url, data) {
   }
 
   console.debug(`${method} ${url}`);
+
   const res = await fetch(url, requestOptions);
   const text = await res.text();
+  //const res = await makeRequest(url, requestOptions);
+  //const text = res.text();
 
   // text should be formated like a INFOTABLE { dataShape: {}, rows: [] }
   // or Entity Not Found : [{EntityName}}]
@@ -83,6 +95,44 @@ async function handleNTLM() {
       isLoginProcessing = false;
     }
   }
+}
+
+function makeRequest(url, requestOptions) {
+  // Native Fetch failed with CORS mode while XMLHttpRequest is working correctly
+  return new Promise(function(resolve, reject) {
+    let xhr = new XMLHttpRequest();
+    xhr.open(requestOptions.method, url);
+    xhr.withCredentials = true;
+
+    const headers = requestOptions.headers;
+    if (headers) Object.keys(headers).forEach(header => xhr.setRequestHeader(header, headers[header]));
+    if (requestOptions.cache) xhr.setRequestHeader("Cache-Control", requestOptions.cache);
+
+    xhr.onload = function() {
+      if (this.status >= 200 && this.status < 300) {
+        resolve({
+          ok: true,
+          status: this.status,
+          statusText: xhr.statusText,
+          text: () => xhr.response
+        });
+      } else {
+        reject({
+          ok: false,
+          status: this.status,
+          statusText: xhr.statusText
+        });
+      }
+    };
+    xhr.onerror = function() {
+      reject({
+        ok: false,
+        status: this.status,
+        statusText: xhr.statusText
+      });
+    };
+    xhr.send(requestOptions.body);
+  });
 }
 
 /*
