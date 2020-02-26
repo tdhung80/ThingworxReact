@@ -23,9 +23,7 @@ export const ValidationForm = React.forwardRef(({ model, children, onSubmit, onV
   // Thanks to https://stackoverflow.com/questions/37949981/call-child-method-from-parent
   useImperativeHandle(ref, () => ({
     ref: scopeEl.current,
-    getModel: () => {
-      return { ...formState.values };
-    },
+    getModel: () => ({ ...formState.values }),
     submit: () => scopeEl.current.dispatchEvent(new Event("submit", { bubbles: false }))
   }));
 

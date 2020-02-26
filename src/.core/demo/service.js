@@ -111,9 +111,7 @@ export default () => {
           setGrid({
             data: res.rows,
             columns: _.orderBy(
-              Object.keys(fields).map(name => {
-                return { ...fields[name], id: name };
-              }),
+              Object.keys(fields).map(name => ({ ...fields[name], id: name })),
               ["ordinal"],
               ["asc"]
             ).map(field => {
@@ -207,6 +205,8 @@ export default () => {
           }
           break;
         }
+        default:
+          break;
       }
     }
   }, 500);
@@ -306,14 +306,14 @@ export default () => {
   };
 
   return (
-    <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
+    <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true} onHide={() => false}>
       <Modal.Header>
         <h1>{i18n.text("Service Playground")}</h1>
         {service.isAnonymous() ? (
           <span>{service.getUser().username}</span>
         ) : (
           <a
-            href="#"
+            href="#a"
             onClick={() => {
               service.logout(true, () => service.loginAsAnonymous());
               return false;
@@ -337,7 +337,7 @@ export default () => {
           ref={stepperEl}
           steps={[
             {
-              header: { circle: <span class="fa fa-cogs" />, label: i18n.label("Action") },
+              header: { circle: <span className="fa fa-cogs" />, label: i18n.label("Action") },
               style: stepContentStyle,
               content: (
                 <>
@@ -387,7 +387,7 @@ export default () => {
               )
             },
             {
-              header: { circle: <span class="fa fa-list" />, label: i18n.label("Result") },
+              header: { circle: <span className="fa fa-list" />, label: i18n.label("Result") },
               style: stepContentStyle,
               content: () => {
                 const { JSONResult } = formState;

@@ -22,7 +22,7 @@ export const FieldInput = React.forwardRef(
     },
     ref
   ) => {
-    const id = `fi:${name}:${counter++}`;
+    const id = `fi_${name}_${counter++}`;
     const [focused, setFocused] = useState();
     const [filled, setFilled] = useState(value && value.length > 0);
     props = {
@@ -95,7 +95,12 @@ export const FieldInput = React.forwardRef(
       // TODO
     } else if (type === "range") {
       // custom-range
-      props = { required, type, ...props, className: "form-control-range" };
+      props = { 
+        required,
+        type, 
+        ...props,
+         className: "form-control-range" 
+      };
     } else {
       props = {
         autoComplete: "off",

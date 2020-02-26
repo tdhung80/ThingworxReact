@@ -21,11 +21,11 @@ export default () => {
       <Modal.Body>
         <Stepper
           animation={false}
-          linear={true}
+          linear={false}
           ref={scopeEl}
           steps={[
             {
-              header: { circle: <span class="fa fa-user" />, label: "Email" },
+              header: { circle: <span className="fa fa-user" />, label: "Email" },
               content: (
                 <>
                   <div> Email tab </div>

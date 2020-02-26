@@ -44,7 +44,7 @@ export default withRouter(({ history }) => {
   };
 
   return (
-    <Modal aria-labelledby="contained-modal-title-vcenter" centered show={true}>
+    <Modal aria-labelledby="contained-modal-title-vcenter" centered show={true} onHide={() => false}>
       <Modal.Header>
         <h1>{i18n.title("Login")}</h1>
       </Modal.Header>

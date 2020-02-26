@@ -41,6 +41,7 @@ Components
             http://js-grid.com/demos/  react-js-grid
             http://www.jquery-bootgrid.com/Examples
   Chart      react-chartist
+  Spinner    https://dmitrymorozoff.github.io/react-spinners-kit/
 
   DatePicker http://projects.wojtekmaj.pl/react-calendar/
   * Select2  https://react-select.com/async
@@ -63,6 +64,15 @@ TODO
   Cache Code Entities    
   Tree / Constainers / Drag Drop / Menu & Toolbars
   Backend: NodeJS + ExpressJS / MongoDB, https://keystonejs.com/getting-started/setting-up/part-1
+  App Layout https://github.com/devias-io/react-material-dashboard
+  IE compatible
+    core-js react-app-polyfill
+    polyfills.js
+      import 'react-app-polyfill/ie11'
+      import 'core-js/features/array/find'
+      import 'core-js/features/array/includes'
+      import 'core-js/features/number/is-nan'
+
 
 CodeSandbox + WebPack
   https://codesandbox.io/s/github/Narvey/react-toolbox-sandbox

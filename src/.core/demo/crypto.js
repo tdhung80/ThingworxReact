@@ -18,7 +18,6 @@ export default () => {
   const descrypt = () => {
     const descrypted = crypto.descrypt(output);
     setOutput(descrypted);
-    window.eval(descrypted);
   };
 
   const test = () => {

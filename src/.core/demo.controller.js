@@ -12,7 +12,7 @@ export default withRouter(({ location, match: { params } }) => {
   const DemoForm = lazy(() => import("." + pathname + ".js"));
 
   // Use NTLM
-  service.loginAsAnonymous();
+  // service.loginAsAnonymous();
 
   return (
     <Page>

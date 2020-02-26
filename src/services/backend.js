@@ -14,6 +14,7 @@ export * from "./backend.settings";
 
 //
 // TODO: use axios "cross browser" instead of fetch API
+// https://cors-anywhere.herokuapp.com/...
 //
 let isLoginProcessing = false; // NTLM login
 
@@ -33,7 +34,8 @@ export async function send(url, data) {
   };
 
   // URL decorator
-  if (url === apiURI.login && data && data.username) {
+  const isLogoutRequest = url === apiURI.logout
+  if (!isLogoutRequest && url === apiURI.login && data && data.username) {
     url = `Users/${data.username}/Properties`;
     requestOptions.headers["Authorization"] = "Basic " + btoa(data.username + ":" + data.password);
   }
@@ -58,8 +60,19 @@ export async function send(url, data) {
 
   console.debug(`${method} ${url}`);
 
-  const res = await fetch(url, requestOptions);
+  let res
+  try {
+    res = await fetch(url, requestOptions);
+  } catch (e) {
+    // Failed to load resource: the server responded with a status of 401 (Unauthorized)
+    // _context2.t0 === 'Unauthorized'
+    if (!isLoginProcessing) {
+      await handleNTLM();
+    }
+    return data;
+  }
   const text = await res.text();
+
   //const res = await makeRequest(url, requestOptions);
   //const text = res.text();
 
@@ -71,10 +84,10 @@ export async function send(url, data) {
     throw (data && data.message) || res.statusText;
   }
 
-  if (!isLoginProcessing) {
+  if (!isLogoutRequest && !isLoginProcessing) {
     await handleNTLM();
   }
-
+  
   return data;
 }
 

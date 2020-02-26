@@ -1,5 +1,4 @@
 import Responsive from "react-responsive";
-import MediaQuery from "react-responsive";
 
 const Desktop = props => <Responsive {...props} minWidth={992} />;
 const Tablet = props => <Responsive {...props} minWidth={768} maxWidth={991} />;
@@ -14,5 +13,3 @@ export default () => (
     <Default>Not mobile (desktop or laptop or tablet)</Default>
   </div>
 );
-
-MediaQuery;

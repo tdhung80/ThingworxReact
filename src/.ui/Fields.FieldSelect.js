@@ -5,7 +5,7 @@ let counter = 0;
 
 export const FieldSelect = React.forwardRef(
   ({ name, label, required = false, placeholder, errorMessage, onBlur, onFocus, ...props }, ref) => {
-    const id = `fs:${name}:${counter++}`;
+    const id = `fs_${name}_${counter++}`;
     const [focused, setFocused] = useState();
     const [filled, setFilled] = useState();
     props = {

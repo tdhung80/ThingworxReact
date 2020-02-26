@@ -19,13 +19,7 @@ export const Stepper = React.forwardRef(({ steps = [], ...props }, ref) => {
     };
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    ref: scopeEl.current,
-    next: () => scopeEl.current.bsStepper.next(),
-    previous: () => scopeEl.current.bsStepper.previous(),
-    to: stepNumber => scopeEl.current.bsStepper.to(stepNumber),
-    reset: () => scopeEl.current.bsStepper.reset()
-  }));
+  useImperativeHandle(ref, () => scopeEl.current.bsStepper);
 
   // Events
 
@@ -43,7 +37,7 @@ export const Stepper = React.forwardRef(({ steps = [], ...props }, ref) => {
                   <span className="bs-stepper-label">{header.label}</span>
                 </button>
               </div>
-              {idx + 1 < stepCount && <div class="line" />}
+              {idx + 1 < stepCount && <div className="line" />}
             </>
           );
         })}

@@ -82,9 +82,7 @@ export default props => {
     // focusEl.current.focus();
   }, []);
 
-  const handleAction = () => {
-    scopeEl.current.submit();
-  };
+  const handleAction = () => scopeEl.current.submit();
 
   const handleFormValidate = (model, errors) => {
     console.clear();
@@ -112,7 +110,7 @@ export default props => {
 
   return (
     <Page>
-      <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
+      <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true} onHide={() => false}>
         <Modal.Header>
           <h1>{i18n.text("Demo Form")}</h1>
         </Modal.Header>

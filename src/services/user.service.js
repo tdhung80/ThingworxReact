@@ -4,7 +4,7 @@ const USER_KEY = "user";
 const ANONYMOUS_KEY = "Anonymous";
 
 export function isAuthenticated() {
-  return localStorage.getItem(USER_KEY);
+  return localStorage.getItem(USER_KEY) !== ANONYMOUS_KEY;
 }
 
 export function isAnonymous() {
@@ -42,6 +42,7 @@ export function logout(notify = true, func) {
       setUser();
       location.reload(true);
     }
-    notify && server.post(apiURI.logout);
+    // Remark, there is a login bug in TWX, it does not allow the same JSESSIONID login again 
+    // notify && server.post(apiURI.logout);
   }
 }

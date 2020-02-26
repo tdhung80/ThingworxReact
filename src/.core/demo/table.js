@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Alert, ActionButton, Button, Modal, ProgressBar } from "../../.ui";
 import translator from "../../.ui/Translator";
-import { fakeAPI } from "../../services";
+// import { fakeAPI } from "../../services";
 
 const i18n = translator("FORM_TABLE_DEMO");
 
