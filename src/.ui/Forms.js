@@ -15,7 +15,14 @@ export function useFormInput(initialValue) {
 }
 
 export const ValidationForm = React.forwardRef(({ model, children, onSubmit, onValidate, ...props }, ref) => {
-  const [formState, input] = useFormState({ ...model }); // take initial model from props.model
+  const [formState, input] = useFormState({ ...model }, {
+    onChange(e, stateValues, nextStateValues) {
+      // TODO: 
+      // const { name, value } = e.target;      
+      // console.log(`the ${name} input has changed!`);
+      // formState.clear() | reset()
+    }
+  }); // take initial model from props.model
   const [fieldErrors, setFieldErrors] = useState({});
   const scopeEl = useRef();
 

@@ -1,10 +1,12 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import "./app.scss";
-import "./app.react.scss";
-import "./app.mdb.scss";
-import "./app.mui.scss";
+import "./app.ui.scss";
+import "./app.ui-react.scss";
+import "./app.ui-mdb.scss";
+import "./app.ui-mui.scss";
+import "./app.ui-bootstrap.scss";
+import "./app.ui-animation.scss";
 // import "./scripts.js";
 
 import { ViewContext } from "./app.context";

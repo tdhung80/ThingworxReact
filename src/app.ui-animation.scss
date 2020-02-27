@@ -1,0 +1,17 @@
+/*
+ * https://ianlunn.github.io/Hover/ 
+ */
+
+// Glow
+.hvr-glow {
+  /* display: inline-block; */
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  transform: perspective(1px) translateZ(0);  
+  transition-duration: 0.3s;
+  transition-property: box-shadow;
+  vertical-align: middle;
+
+  &:hover, &:focus, &:active {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  }
+}

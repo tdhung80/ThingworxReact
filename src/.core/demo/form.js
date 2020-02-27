@@ -122,14 +122,14 @@ export default props => {
             </Alert>
           )}
           <Form onSubmit={handleFormSubmit} onValidate={handleFormValidate} ref={scopeEl} model={DataModel}>
-            {(input, fieldErrors) => (
-              <>
+            {({ text, email, password, date, time, month, week, checkbox, radio, number, range, select, selectMultiple, color, tel, url, search, textarea }, fieldErrors) => (
+              <div className="container hvr-glow py-4">
                 <FieldInput
                   label="Your name"
                   placeholder="Hello world"
                   floating={true}
                   required={true}
-                  {...input.text("yourname")}
+                  {...text("yourname")}
                   errorMessage={fieldErrors.yourname}
                   ref={focusEl}
                 />
@@ -140,7 +140,7 @@ export default props => {
                       label="Email"
                       floating={true}
                       required={true}
-                      {...input.email("email")}
+                      {...email("email")}
                       errorMessage={fieldErrors.email}
                     />
                   </div>
@@ -150,7 +150,7 @@ export default props => {
                       floating={true}
                       required={true}
                       minLength="8"
-                      {...input.password("password")}
+                      {...password("password")}
                       errorMessage={fieldErrors.password}
                     />
                   </div>
@@ -161,15 +161,15 @@ export default props => {
                     <FieldInput
                       label="Departure"
                       required={true}
-                      {...input.date("departureDate")}
+                      {...date("departureDate")}
                       errorMessage={fieldErrors.departureDate}
                     />
                   </div>
                   <div className="col">
                     <FieldInput
                       label="Flight Time"
-                      require={true}
-                      {...input.time("flightTime")}
+                      required={true}
+                      {...time("flightTime")}
                       errorMessage={fieldErrors.flightTime}
                     />
                   </div>
@@ -177,21 +177,21 @@ export default props => {
 
                 <div className="row">
                   <div className="col">
-                    <FieldInput label="Month" required {...input.month("month")} errorMessage={fieldErrors.month} />
+                    <FieldInput label="Month" required {...month("month")} errorMessage={fieldErrors.month} />
                   </div>
                   <div className="col">
-                    <FieldInput label="Week" required {...input.week("week")} errorMessage={fieldErrors.week} />
+                    <FieldInput label="Week" required {...week("week")} errorMessage={fieldErrors.week} />
                   </div>
                 </div>
 
                 <div className="row mt-3">
                   <div className="col">
-                    <FieldInput label="Include Hotel" {...input.checkbox("extra", "hotel")} />
-                    <FieldInput label="Include Car" {...input.checkbox("extra", "car")} />
+                    <FieldInput label="Include Hotel" {...checkbox("extra", "hotel")} />
+                    <FieldInput label="Include Car" {...checkbox("extra", "car")} />
                   </div>
                   <div className="col">
-                    <FieldInput label="One-way" {...input.radio("trip", "one-way")} />
-                    <FieldInput label="Round Trip" {...input.radio("trip", "round-trip")} />
+                    <FieldInput label="One-way" {...radio("trip", "one-way")} />
+                    <FieldInput label="Round Trip" {...radio("trip", "round-trip")} />
                   </div>
                 </div>
 
@@ -200,13 +200,13 @@ export default props => {
                     <FieldInput
                       label="Travelers"
                       required={true}
-                      {...input.number("travelers")}
+                      {...number("travelers")}
                       errorMessage={fieldErrors.travelers}
                     />
                     <FieldInput
                       label="Price Range"
                       required={true}
-                      {...input.range("priceRange")}
+                      {...range("priceRange")}
                       errorMessage={fieldErrors.priceRange}
                     />
                   </div>
@@ -214,7 +214,7 @@ export default props => {
                     <FieldSelect
                       label="Cabins"
                       required={true}
-                      {...input.selectMultiple("cabins")}
+                      {...selectMultiple("cabins")}
                       size="4"
                       errorMessage={fieldErrors.cabins}
                     >
@@ -224,27 +224,28 @@ export default props => {
                     </FieldSelect>
                   </div>
                 </div>
-                <FieldSelect label="Cabin" required={true} {...input.select("cabin")} errorMessage={fieldErrors.cabin}>
+
+                <FieldSelect label="Cabin" required={true} {...select("cabin")} errorMessage={fieldErrors.cabin}>
                   <option value="">---</option>
                   <option value="economy">Economy</option>
                   <option value="business">Business</option>
                   <option value="first">First</option>
                 </FieldSelect>
 
-                <FieldInput label="Favorite Color" {...input.color("color")} errorMessage={fieldErrors.color} />
-                <FieldInput label="Phone" required {...input.tel("tel")} errorMessage={fieldErrors.tel} />
-                <FieldInput label="Website" required {...input.url("url")} errorMessage={fieldErrors.url} />
-                <FieldInput label="Search" required {...input.search("search")} errorMessage={fieldErrors.search} />
+                <FieldInput label="Favorite Color" {...color("color")} errorMessage={fieldErrors.color} />
+                <FieldInput label="Phone" required {...tel("tel")} errorMessage={fieldErrors.tel} />
+                <FieldInput label="Website" required {...url("url")} errorMessage={fieldErrors.url} />
+                <FieldInput label="Search" required {...search("search")} errorMessage={fieldErrors.search} />
                 <FieldInput
                   label="Suggestions"
                   required
                   maxLength={1000}
-                  {...input.textarea("suggestions")}
+                  {...textarea("suggestions")}
                   errorMessage={fieldErrors.suggestions}
                   type="textarea"
                 />
                 <Button className="d-none" inProgress={inProgress} />
-              </>
+              </div>
             )}
           </Form>
         </Modal.Body>
