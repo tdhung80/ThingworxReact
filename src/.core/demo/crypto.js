@@ -38,7 +38,7 @@ export default () => {
   };
 
   return (
-    <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true}>
+    <Modal aria-labelledby="contained-modal-title-vcenter" size="lg" centered show={true} onHide={() => false}>
       <Modal.Header>
         <h1>Demo Crypto</h1>
       </Modal.Header>

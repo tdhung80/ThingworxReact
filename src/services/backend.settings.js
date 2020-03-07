@@ -301,8 +301,7 @@ export const EntityGenericServices = [
   "WritePropertiesToStream"
 ];
 
-const TWServerURI = crypto.descrypt(
-  "5)%8>{<zAFd%26Llp1U2FsdGVkX19cMISPxYf3o/vh4mbLmQW9VR4CDn5ZYwRWLy8mdqmKohA0R8D0CJZa+Kq9DZhn6ZASqt+HsBhMNg=="
-);
+// const TWServerURI = crypto.descrypt("5)%8>{<zAFd%26Llp1U2FsdGVkX19cMISPxYf3o/vh4mbLmQW9VR4CDn5ZYwRWLy8mdqmKohA0R8D0CJZa+Kq9DZhn6ZASqt+HsBhMNg==");
+const TWServerURI = crypto.descrypt("mh,]2Fi}CW-]QT/]Llp1U2FsdGVkX1895xMnOxAZUv/LBj/vayQCqgWJBCX1OzXfzdob6TT1s7GHC32MTBcGcBEb2Lw/zRNvhKA1knGUng==");
 
 export default TWServerURI;

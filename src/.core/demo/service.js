@@ -72,14 +72,27 @@ export default () => {
         const serviceArgs = {};
         res.rows[0].parameterDefinitions.rows.forEach(p => {
           switch (p.baseType) {
-            case "STRING":
+            case "STRING": case "TEXT":
               serviceArgs[p.name] = p.description;
               break;
+            case "BOOLEAN":
+              serviceArgs[p.name] = false;
+              break;
+            case "DATETIME":
+              serviceArgs[p.name] = new Date();
+              break;                          
+            case "INTEGER": case "LONG":
+              serviceArgs[p.name] = 0;
+              break;
+            case "NUMBER": 
+              serviceArgs[p.name] = 0.0;
+              break;              
             default:
               serviceArgs[p.name] = p.baseType;
               break;
           }
         });
+        console.log(serviceArgs);
         setServiceArgs(serviceArgs);
       })
       .catch(reason => {
@@ -265,8 +278,8 @@ export default () => {
               debounceLoadSuggestions(value, reason);
             } else if (n === 2 && suggestions.length === 1 && reason === "suggestion-selected") {
               onSuggestionsFetchRequested({ value: value + "/", reason });
-            } else if (n === 4 && suggestions.length === 1 && reason === "suggestion-selected") {
-              setSuggestions([]);
+            } else if (n === 4) {
+              if (suggestions.length === 1) setSuggestions([]);
               getServiceDefinition(value);
             }
             break;
