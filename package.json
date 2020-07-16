@@ -14,7 +14,7 @@
     "classnames": "2.2.6",
     "crypto-js": "3.1.9-1",
     "faker": "4.1.0",
-    "lodash": "4.17.11",
+    "lodash": "4.17.19",
     "muicss": "0.9.41",
     "nprogress": "0.2.0",
     "react": "16.12.0",
